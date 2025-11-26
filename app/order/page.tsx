@@ -79,10 +79,10 @@ export default function OrderPage() {
 
     const result = await res.json();
     if (result.ok) {
-      alert("문자 발송 완료!");
+      alert("문자 발송 완료!!!!");
       router.push("/");
     } else {
-      alert("문자 발송 실패!");
+      alert("문자 발송 실패!!!!");
     }
   };
 

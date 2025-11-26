@@ -154,7 +154,7 @@ export default function OrderPage() {
           className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8"
         >
           {/* 상품 선택 */}
-          <div className="mb-6 sm:mb-8">
+          <div className="pb-6 mb-6 sm:mb-8 sm:pb-8">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-red-700 mb-4 sm:mb-6 text-center">
               🍎 상품 선택 <span className="text-red-600">*</span>
             </h2>

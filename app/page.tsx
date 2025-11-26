@@ -1,65 +1,205 @@
-import Image from "next/image";
+import { Apple, Truck, Star } from "lucide-react";
+import { ImageWithFallback } from "./components/ImageWithFallback";
+import Link from "next/link";
 
-export default function Home() {
+export default function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div
+      className="min-h-screen bg-gray-100 flex items-center justify-center p-8"
+      style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+    >
+      <div className="max-w-4xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden relative">
+        {/* Decorative Elements */}
+        <div className="absolute top-4 right-4 text-yellow-400">
+          <Star className="w-12 h-12 fill-current animate-pulse" />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="absolute top-20 right-8 text-yellow-300">
+          <Star
+            className="w-8 h-8 fill-current animate-pulse"
+            style={{ animationDelay: "0.5s" }}
+          />
         </div>
-      </main>
+        <div className="absolute top-8 right-24 text-yellow-400">
+          <Star
+            className="w-6 h-6 fill-current animate-pulse"
+            style={{ animationDelay: "1s" }}
+          />
+        </div>
+
+        {/* Header with Image */}
+        <div className="relative h-80 overflow-hidden">
+          <ImageWithFallback
+            src="https://images.unsplash.com/photo-1635123471750-fc6ada3e3bcc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZWQlMjBhcHBsZXMlMjBvcmNoYXJkfGVufDF8fHx8MTc2NDEzMzY0NXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+            alt="사과 농장"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+
+          {/* Floating Apples Decoration */}
+          <div className="absolute top-6 left-6">
+            <Apple className="w-16 h-16 text-red-500 fill-current drop-shadow-lg" />
+          </div>
+          <div className="absolute top-12 left-28">
+            <Apple className="w-12 h-12 text-green-500 fill-current drop-shadow-lg" />
+          </div>
+
+          <div className="absolute bottom-0 left-0 right-0 px-8 py-6">
+            <div className="flex items-end justify-between">
+              <div className="text-white">
+                <h1
+                  className="text-6xl mb-2 drop-shadow-lg font-black"
+                  style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+                >
+                  🍎 송하 농장
+                </h1>
+                <p
+                  className="text-2xl opacity-90 font-medium"
+                  style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+                >
+                  신선한 사과를 직접 농장에서 배송합니다
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Price Table */}
+        <div className="p-10 bg-gradient-to-b from-white to-orange-50">
+          <div className="text-center mb-10">
+            <h2
+              className="text-4xl text-red-700 mb-2 font-black"
+              style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+            >
+              🎁 특별 가격 안내
+            </h2>
+            <p
+              className="text-gray-600 font-medium"
+              style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+            >
+              최상급 품질의 사과를 합리적인 가격으로!
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            {/* 5kg Section */}
+            <div>
+              <div className="bg-gradient-to-r from-red-600 to-red-500 text-white px-6 py-4 rounded-t-2xl shadow-lg">
+                <div className="flex items-center justify-between">
+                  <h3
+                    className="text-3xl font-bold"
+                    style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+                  >
+                    🍎 5키로
+                  </h3>
+                  <Apple className="w-10 h-10" />
+                </div>
+              </div>
+              <div className="bg-white border-4 border-red-600 rounded-b-2xl overflow-hidden shadow-lg">
+                <PriceRow label="16과" price="4만5천원" color="red" isFirst />
+                <PriceRow label="17과" price="4만3천원" color="red" />
+                <PriceRow label="19과" price="3만9천원" color="red" />
+              </div>
+            </div>
+
+            {/* 10kg Section */}
+            <div>
+              <div className="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-6 py-4 rounded-t-2xl shadow-lg">
+                <div className="flex items-center justify-between">
+                  <h3
+                    className="text-3xl font-bold"
+                    style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+                  >
+                    🍎 10키로
+                  </h3>
+                  <Apple className="w-10 h-10" />
+                </div>
+              </div>
+              <div className="bg-white border-4 border-orange-600 rounded-b-2xl overflow-hidden shadow-lg">
+                <PriceRow
+                  label="16과"
+                  price="8만5천원"
+                  color="orange"
+                  isFirst
+                />
+                <PriceRow label="17과" price="8만원" color="orange" />
+                <PriceRow label="19과" price="7만3천원" color="orange" />
+              </div>
+            </div>
+          </div>
+
+          {/* Notice */}
+          <div className="bg-gradient-to-r from-yellow-100 to-yellow-50 border-2 border-yellow-500 p-6 rounded-2xl shadow-md mb-8">
+            <div className="flex items-center gap-4">
+              <Truck className="w-12 h-12 text-yellow-700 flex-shrink-0" />
+              <div>
+                <p
+                  className="text-yellow-900 text-xl font-bold"
+                  style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+                >
+                  ** 전부 택배비 포함
+                </p>
+                <p
+                  className="text-yellow-700 font-medium"
+                  style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+                >
+                  안전하고 신속하게 배송해드립니다
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Order Button */}
+          <div className="flex justify-center">
+            <Link href="/order">
+              <button
+                className="group relative bg-gradient-to-r from-red-600 to-orange-600 text-white px-12 py-6 rounded-full text-2xl font-bold shadow-2xl hover:shadow-red-500/50 transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden"
+                style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+              >
+                {/* Animated Background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                {/* Button Content */}
+                <span className="relative flex items-center gap-3">
+                  <Apple className="w-8 h-8 group-hover:rotate-12 transition-transform duration-300" />
+                  주문하러 가기
+                  <span className="inline-block group-hover:translate-x-2 transition-transform duration-300">
+                    →
+                  </span>
+                </span>
+
+                {/* Shine Effect */}
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+              </button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PriceRow({
+  label,
+  price,
+  color,
+  isFirst = false,
+}: {
+  label: string;
+  price: string;
+  color: "red" | "orange";
+  isFirst?: boolean;
+}) {
+  const textColor = color === "red" ? "text-red-700" : "text-orange-700";
+
+  return (
+    <div
+      className={`flex justify-between items-center px-6 py-5 ${
+        !isFirst ? "border-t-2 border-gray-100" : ""
+      }`}
+      style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+    >
+      <span className="text-xl text-gray-700 font-medium">{label}</span>
+      <span className={`text-3xl font-bold ${textColor}`}>{price}</span>
     </div>
   );
 }

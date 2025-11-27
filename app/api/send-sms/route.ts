@@ -3,12 +3,6 @@ const { SolapiMessageService } = require("solapi");
 
 export async function POST(req: Request) {
   try {
-    console.log("👉 ENV Check:", {
-      key: process.env.NEXT_PUBLIC_SOLAPI_API_KEY,
-      secret: process.env.NEXT_PUBLIC_SOLAPI_API_SECRET,
-      from: process.env.NEXT_PUBLIC_SMS_FROM,
-    });
-
     const messageService = new SolapiMessageService(
       process.env.NEXT_PUBLIC_SOLAPI_API_KEY,
       process.env.NEXT_PUBLIC_SOLAPI_API_SECRET

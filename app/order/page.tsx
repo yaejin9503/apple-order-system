@@ -2,21 +2,27 @@
 
 import { Apple, Copy, Check } from "lucide-react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+
+import FormInput from "@/src/components/order/FormInput";
+import FormTextarea from "@/src/components/order/FormTextarea";
+import LoadingModal from "@/src/components/LoadingModal";
+import { useOrderForm } from "@/src/hooks/order/useOrderForm";
+import { APPLE_10KG, APPLE_5KG } from "@/src/libs/const";
 
 export default function OrderPage() {
-  const router = useRouter();
-  const [isSameAsOrderer, setIsSameAsOrderer] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<string>("");
-  const [formData, setFormData] = useState({
-    ordererName: "",
-    ordererPhone: "",
-    receiverName: "",
-    receiverPhone: "",
-    address: "",
-  });
+  const {
+    selectedProduct,
+    setSelectedProduct,
+    isSameAsOrderer,
+    formData,
+    isSubmitting,
+    handleSameAsOrderer,
+    handleOrdererChange,
+    handleReceiverChange,
+    handleSubmit,
+  } = useOrderForm();
 
+  const [copied, setCopied] = useState(false);
   const accountNumber = `${process.env.NEXT_PUBLIC_ACCOUNT} 카카오뱅크 송상은`;
 
   const handleCopy = async () => {
@@ -28,75 +34,6 @@ export default function OrderPage() {
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("복사 실패:", err);
-    }
-  };
-
-  const handleSameAsOrderer = (checked: boolean) => {
-    setIsSameAsOrderer(checked);
-    if (checked) {
-      setFormData({
-        ...formData,
-        receiverName: formData.ordererName,
-        receiverPhone: formData.ordererPhone,
-      });
-    }
-  };
-
-  const handleOrdererChange = (
-    field: "ordererName" | "ordererPhone",
-    value: string
-  ) => {
-    const newFormData = { ...formData, [field]: value };
-    setFormData(newFormData);
-
-    if (isSameAsOrderer) {
-      if (field === "ordererName") {
-        newFormData.receiverName = value;
-      } else if (field === "ordererPhone") {
-        newFormData.receiverPhone = value;
-      }
-      setFormData(newFormData);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!selectedProduct) {
-      alert("상품을 선택해주세요!");
-      return;
-    }
-
-    // 상품 정보 파싱 (예: "5키로 16과 (4만5천원)" -> 각 부분 분리)
-    const productInfo = selectedProduct.match(
-      /(\d+키로)\s+(\d+과)\s+\(([^)]+)\)/
-    );
-    const weight = productInfo ? productInfo[1] : "";
-    const count = productInfo ? productInfo[2] : "";
-    const price = productInfo ? productInfo[3] : "";
-
-    let message = "";
-
-    if (isSameAsOrderer) {
-      // 주문자와 받는 분이 동일한 경우
-      message = `[사과 주문 접수]\n상품: ${weight} ${count}\n가격: ${price}\n\n주문자: ${formData.ordererName}\n연락처: ${formData.ordererPhone}\n주소: ${formData.address}`;
-    } else {
-      // 주문자와 받는 분이 다른 경우
-      message = `[사과 주문 접수]\n상품: ${weight} ${count}\n가격: ${price}\n\n주문자: ${formData.ordererName}\n주문자 연락처: ${formData.ordererPhone}\n\n받는 분: ${formData.receiverName}\n받는 분 연락처: ${formData.receiverPhone}\n주소: ${formData.address}`;
-    }
-
-    const songPhone = process.env.NEXT_PUBLIC_SONG_PHONE || "";
-    const res = await fetch("/api/send-sms", {
-      method: "POST",
-      body: JSON.stringify({ phone: songPhone, message }),
-    });
-
-    const result = await res.json();
-    if (result.ok) {
-      alert("문자 발송 완료!!!!");
-      router.push("/");
-    } else {
-      alert("문자 발송 실패!!!!");
     }
   };
 
@@ -165,11 +102,7 @@ export default function OrderPage() {
                 <h3 className="text-base sm:text-lg font-bold text-red-600 mb-2">
                   5키로
                 </h3>
-                {[
-                  { label: "16과", price: "4만5천원" },
-                  { label: "17과", price: "4만3천원" },
-                  { label: "19과", price: "3만9천원" },
-                ].map((product) => (
+                {APPLE_5KG.map((product) => (
                   <button
                     key={`5kg-${product.label}`}
                     type="button"
@@ -202,11 +135,7 @@ export default function OrderPage() {
                 <h3 className="text-base sm:text-lg font-bold text-orange-600 mb-2">
                   10키로
                 </h3>
-                {[
-                  { label: "16과", price: "8만5천원" },
-                  { label: "17과", price: "8만원" },
-                  { label: "19과", price: "7만3천원" },
-                ].map((product) => (
+                {APPLE_10KG.map((product) => (
                   <button
                     key={`10kg-${product.label}`}
                     type="button"
@@ -246,37 +175,22 @@ export default function OrderPage() {
             </div>
 
             <div className="space-y-3 sm:space-y-4">
-              <div>
-                <label className="block text-gray-700 font-bold mb-2 text-sm sm:text-base md:text-lg">
-                  이름 <span className="text-red-600">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.ordererName}
-                  onChange={(e) =>
-                    handleOrdererChange("ordererName", e.target.value)
-                  }
-                  className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg sm:rounded-xl focus:border-red-500 focus:outline-none transition-colors text-base sm:text-lg"
-                  placeholder="이름을 입력해주세요"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-bold mb-2 text-sm sm:text-base md:text-lg">
-                  연락처 <span className="text-red-600">*</span>
-                </label>
-                <input
-                  type="tel"
-                  required
-                  value={formData.ordererPhone}
-                  onChange={(e) =>
-                    handleOrdererChange("ordererPhone", e.target.value)
-                  }
-                  className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg sm:rounded-xl focus:border-red-500 focus:outline-none transition-colors text-base sm:text-lg"
-                  placeholder="010-0000-0000"
-                />
-              </div>
+              <FormInput
+                label="이름"
+                required
+                type="text"
+                value={formData.ordererName}
+                onChange={(value) => handleOrdererChange("ordererName", value)}
+                placeholder="이름을 입력해주세요"
+              />
+              <FormInput
+                label="연락처"
+                required
+                type="tel"
+                value={formData.ordererPhone}
+                onChange={(value) => handleOrdererChange("ordererPhone", value)}
+                placeholder="010-0000-0000"
+              />
             </div>
           </div>
 
@@ -305,55 +219,36 @@ export default function OrderPage() {
             </div>
 
             <div className="space-y-3 sm:space-y-4">
-              <div>
-                <label className="block text-gray-700 font-bold mb-2 text-sm sm:text-base md:text-lg">
-                  이름 <span className="text-red-600">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.receiverName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, receiverName: e.target.value })
-                  }
-                  disabled={isSameAsOrderer}
-                  className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg sm:rounded-xl focus:border-orange-500 focus:outline-none transition-colors text-base sm:text-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  placeholder="이름을 입력해주세요"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-bold mb-2 text-sm sm:text-base md:text-lg">
-                  연락처 <span className="text-red-600">*</span>
-                </label>
-                <input
-                  type="tel"
-                  required
-                  value={formData.receiverPhone}
-                  onChange={(e) =>
-                    setFormData({ ...formData, receiverPhone: e.target.value })
-                  }
-                  disabled={isSameAsOrderer}
-                  className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg sm:rounded-xl focus:border-orange-500 focus:outline-none transition-colors text-base sm:text-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  placeholder="010-0000-0000"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-bold mb-2 text-sm sm:text-base md:text-lg">
-                  주소 <span className="text-red-600">*</span>
-                </label>
-                <textarea
-                  required
-                  value={formData.address}
-                  onChange={(e) =>
-                    setFormData({ ...formData, address: e.target.value })
-                  }
-                  rows={3}
-                  className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg sm:rounded-xl focus:border-orange-500 focus:outline-none transition-colors text-base sm:text-lg resize-none"
-                  placeholder="배송받으실 주소를 입력해주세요"
-                />
-              </div>
+              <FormInput
+                label="이름"
+                required
+                type="text"
+                value={formData.receiverName}
+                onChange={(value) =>
+                  handleReceiverChange("receiverName", value)
+                }
+                disabled={isSameAsOrderer}
+                placeholder="이름을 입력해주세요"
+              />
+              <FormInput
+                label="연락처"
+                required
+                type="tel"
+                value={formData.receiverPhone}
+                onChange={(value) =>
+                  handleReceiverChange("receiverPhone", value)
+                }
+                disabled={isSameAsOrderer}
+                placeholder="010-0000-0000"
+              />
+              <FormTextarea
+                label="주소"
+                required
+                value={formData.address}
+                onChange={(value) => handleReceiverChange("address", value)}
+                placeholder="배송받으실 주소를 입력해주세요"
+                rows={3}
+              />
             </div>
           </div>
 
@@ -385,6 +280,9 @@ export default function OrderPage() {
           </div>
         </form>
       </div>
+
+      {/* Loading Modal */}
+      {isSubmitting && <LoadingModal isOpen={isSubmitting} />}
     </div>
   );
 }

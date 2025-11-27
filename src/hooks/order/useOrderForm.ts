@@ -7,6 +7,7 @@ export interface FormData {
   receiverName: string;
   receiverPhone: string;
   address: string;
+  detailAddress: string;
 }
 
 export interface UseOrderFormReturn {
@@ -36,6 +37,7 @@ export function useOrderForm(): UseOrderFormReturn {
     receiverName: "",
     receiverPhone: "",
     address: "",
+    detailAddress: "",
   });
 
   const handleProductSelect = (productId: string) => {
@@ -95,14 +97,19 @@ export function useOrderForm(): UseOrderFormReturn {
 
       let message = "";
 
+      const fullAddress = formData.detailAddress
+        ? `${formData.address} ${formData.detailAddress}`
+        : formData.address;
+
       if (isSameAsOrderer) {
         // 주문자와 받는 분이 동일한 경우
-        message = `[사과 주문 접수]\n상품: ${weight} ${count}\n가격: ${price}\n\n주문자: ${formData.ordererName}\n연락처: ${formData.ordererPhone}\n주소: ${formData.address}`;
+        message = `[사과 주문 접수]\n상품: ${weight} ${count}\n가격: ${price}\n\n주문자: ${formData.ordererName}\n연락처: ${formData.ordererPhone}\n주소: ${fullAddress}`;
       } else {
         // 주문자와 받는 분이 다른 경우
-        message = `[사과 주문 접수]\n상품: ${weight} ${count}\n가격: ${price}\n\n주문자: ${formData.ordererName}\n주문자 연락처: ${formData.ordererPhone}\n\n받는 분: ${formData.receiverName}\n받는 분 연락처: ${formData.receiverPhone}\n주소: ${formData.address}`;
+        message = `[사과 주문 접수]\n상품: ${weight} ${count}\n가격: ${price}\n\n주문자: ${formData.ordererName}\n주문자 연락처: ${formData.ordererPhone}\n\n받는 분: ${formData.receiverName}\n받는 분 연락처: ${formData.receiverPhone}\n주소: ${fullAddress}`;
       }
 
+      console.log("보낼 메시지:", message);
       const songPhone = process.env.NEXT_PUBLIC_SONG_PHONE || "";
       const res = await fetch("/api/send-sms", {
         method: "POST",

@@ -8,6 +8,7 @@ import FormTextarea from "@/src/components/order/FormTextarea";
 import LoadingModal from "@/src/components/LoadingModal";
 import { useOrderForm } from "@/src/hooks/order/useOrderForm";
 import { APPLE_10KG, APPLE_5KG } from "@/src/libs/const";
+import { Postcode } from "@/src/components/Postcode";
 
 export default function OrderPage() {
   const {
@@ -23,6 +24,7 @@ export default function OrderPage() {
   } = useOrderForm();
 
   const [copied, setCopied] = useState(false);
+  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
   const accountNumber = `${process.env.NEXT_PUBLIC_ACCOUNT} 카카오뱅크 송상은`;
 
   const handleCopy = async () => {
@@ -35,6 +37,10 @@ export default function OrderPage() {
     } catch (err) {
       console.error("복사 실패:", err);
     }
+  };
+
+  const handleAddressComplete = (address: string) => {
+    handleReceiverChange("address", address);
   };
 
   return (
@@ -241,13 +247,42 @@ export default function OrderPage() {
                 disabled={isSameAsOrderer}
                 placeholder="010-0000-0000"
               />
-              <FormTextarea
-                label="주소"
-                required
-                value={formData.address}
-                onChange={(value) => handleReceiverChange("address", value)}
-                placeholder="배송받으실 주소를 입력해주세요"
-                rows={3}
+              <div>
+                <label className="block text-gray-700 font-bold mb-2 text-sm sm:text-base md:text-lg">
+                  주소 <span className="text-red-600">*</span>
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    required
+                    value={formData.address}
+                    readOnly
+                    className="flex-1 px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg sm:rounded-xl focus:border-orange-500 focus:outline-none transition-colors text-base sm:text-lg bg-gray-50 cursor-pointer"
+                    placeholder="주소찾기 버튼을 눌러주세요"
+                    onClick={() => setIsPostcodeOpen(true)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsPostcodeOpen(true)}
+                    className="px-4 py-2 sm:px-6 sm:py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg sm:rounded-xl font-bold text-sm sm:text-base transition-all duration-200 hover:scale-105 active:scale-95 whitespace-nowrap"
+                  >
+                    주소찾기
+                  </button>
+                </div>
+              </div>
+              <FormInput
+                label="상세주소"
+                type="text"
+                value={formData.detailAddress}
+                onChange={(value) =>
+                  handleReceiverChange("detailAddress", value)
+                }
+                disabled={!formData.address}
+                placeholder={
+                  formData.address
+                    ? "상세주소를 입력해주세요"
+                    : "먼저 주소를 검색해주세요"
+                }
               />
             </div>
           </div>
@@ -283,6 +318,13 @@ export default function OrderPage() {
 
       {/* Loading Modal */}
       {isSubmitting && <LoadingModal isOpen={isSubmitting} />}
+
+      {/* Postcode Modal */}
+      <Postcode
+        isOpen={isPostcodeOpen}
+        onClose={() => setIsPostcodeOpen(false)}
+        onComplete={handleAddressComplete}
+      />
     </div>
   );
 }

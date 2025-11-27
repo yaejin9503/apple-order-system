@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍎 Apple Order System
 
-## Getting Started
+> 🛒 사과 판매를 위한 간단한 주문 웹 애플리케이션
 
-First, run the development server:
+[라이브 데모](https://apple-order-system.vercel.app/)
+
+---
+
+## 📘 프로젝트 개요
+
+이 프로젝트는 “신선한 사과”를 판매하기 위한 간단한 주문 시스템입니다.  
+홈페이지에서 상품 정보를 보고, “주문하기” 버튼을 눌러 주문폼에 이름, 연락처, 배송지 등을 입력하면 —  
+서버가 문자(SMS)로 주문 알림을 발송하도록 설계되었습니다.
+
+- **비회원 / 비사업자** 기준으로도 동작
+- **SMS 자동 발송**을 통해, 별도의 카카오 비즈니스 채널이나 인증 없이도 알림 시스템 구현
+- Next.js + Vercel + 외부 SMS API 연동을 통한 완전한 웹-호스팅 & 배포
+
+---
+
+## 🖥️ 페이지 구성 및 기능
+
+| URL / 페이지                | 기능 / 설명                                                                     |
+| --------------------------- | ------------------------------------------------------------------------------- |
+| `/`                         | 메인 홈 — 사과 상품 정보, 가격, 배송 안내, 입금 계좌 정보, “주문하러 가기” 버튼 |
+| `/order`                    | 주문 폼 — 상품 선택, 주문자 정보, 수취인 정보 입력 폼 + 주문 제출 기능          |
+| API Route (`/api/send-sms`) | 주문 제출 시 호출되는 API — 입력값을 받아 SMS API (예: Solapi)로 알림 문자 발송 |
+
+---
+
+## 🛠️ 기술 스택
+
+- **Next.js** (App Router 기반) — 프런트 + 서버를 동시에
+- **Vercel** — 배포 및 호스팅
+- **sms API (예: Solapi)** — 주문 알림 문자 발송
+- **HTML / CSS / React** — UI 구현
+- (필요 시) 폼 validation, 입력값 검증, 에러 핸들링
+
+---
+
+## 🚀 로컬에서 실행하는 방법 (개발 환경)
 
 ```bash
+# 1. 리포지토리 클론
+git clone <repo-url>
+cd <project-folder>
+
+# 2. 의존성 설치
+npm install
+
+# 3. 환경 변수 설정
+# .env.local 파일을 프로젝트 루트에 생성하고 아래 값 채우기
+SOLAPI_API_KEY=...
+SOLAPI_API_SECRET=...
+SMS_FROM=01012345678   # 발신번호
+
+# 4. 개발 서버 실행
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

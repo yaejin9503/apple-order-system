@@ -20,7 +20,7 @@ export interface UseOrderFormReturn {
   handleSameAsOrderer: (checked: boolean) => void;
   handleOrdererChange: (
     field: "ordererName" | "ordererPhone",
-    value: string
+    value: string,
   ) => void;
   handleReceiverChange: (field: keyof FormData, value: string) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
@@ -57,7 +57,7 @@ export function useOrderForm(): UseOrderFormReturn {
 
   const handleOrdererChange = (
     field: "ordererName" | "ordererPhone",
-    value: string
+    value: string,
   ) => {
     const newFormData = { ...formData, [field]: value };
     setFormData(newFormData);
@@ -89,7 +89,7 @@ export function useOrderForm(): UseOrderFormReturn {
     try {
       // 상품 정보 파싱 (예: "5키로 16과 (4만5천원)" -> 각 부분 분리)
       const productInfo = selectedProduct.match(
-        /(\d+키로)\s+(\d+과)\s+\(([^)]+)\)/
+        /(\d+키로)\s+(\d+과)\s+\(([^)]+)\)/,
       );
       const weight = productInfo ? productInfo[1] : "";
       const count = productInfo ? productInfo[2] : "";

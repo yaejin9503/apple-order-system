@@ -1,4 +1,4 @@
-import { APPLE_5KG, APPLE_10KG } from "@/src/libs/const";
+import { APPLE_5KG, APPLE_10KG, BLUEBERRY_1KG } from "@/src/libs/const";
 
 interface ProductSelectorProps {
   selectedProduct: string;
@@ -15,7 +15,7 @@ export default function ProductSelector({
         🍎 상품 선택 <span className="text-red-600">*</span>
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {/* 5kg 상품들 */}
         <div className="space-y-2 sm:space-y-3">
           <h3 className="text-base sm:text-lg font-bold text-red-600 mb-2">
@@ -70,6 +70,37 @@ export default function ProductSelector({
                     {product.label}
                   </span>
                   <span className="text-base sm:text-lg font-bold text-orange-700">
+                    {product.price}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 블루베리 1kg */}
+        <div className="space-y-2 sm:space-y-3">
+          <h3 className="text-base sm:text-lg font-bold text-purple-600 mb-2">
+            1키로
+          </h3>
+          {BLUEBERRY_1KG.map((product) => {
+            const productValue = `1키로 ${product.label} (${product.price})`;
+            return (
+              <button
+                key={`1kg-${product.label}`}
+                type="button"
+                onClick={() => onProductSelect(productValue)}
+                className={`w-full p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 ${
+                  selectedProduct === productValue
+                    ? "border-purple-600 bg-purple-50 shadow-lg scale-105"
+                    : "border-gray-300 bg-white hover:border-purple-400 hover:bg-purple-50"
+                }`}
+              >
+                <div className="flex justify-between items-center">
+                  <span className="text-sm sm:text-base font-bold text-gray-700">
+                    {product.label}
+                  </span>
+                  <span className="text-base sm:text-lg font-bold text-purple-700">
                     {product.price}
                   </span>
                 </div>

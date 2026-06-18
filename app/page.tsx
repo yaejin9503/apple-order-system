@@ -1,7 +1,7 @@
 "use client";
 
 import { ImageWithFallback } from "@/src/components/ImageWithFallback";
-import { APPLE_10KG, APPLE_5KG } from "@/src/libs/const";
+import { APPLE_10KG, APPLE_5KG, BLUEBERRY_1KG } from "@/src/libs/const";
 import { Apple, Truck, Star, Copy, Check } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -99,7 +99,7 @@ export default function App() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
             {/* 5kg Section */}
             <div>
               <div className="bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-3 sm:px-6 sm:py-4 rounded-t-2xl shadow-lg">
@@ -146,6 +146,32 @@ export default function App() {
                     label={product.label}
                     price={product.price}
                     color="orange"
+                    isFirst={index === 0}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* 블루베리 1kg Section */}
+            <div>
+              <div className="bg-gradient-to-r from-purple-600 to-purple-500 text-white px-4 py-3 sm:px-6 sm:py-4 rounded-t-2xl shadow-lg">
+                <div className="flex items-center justify-between">
+                  <h3
+                    className="text-xl sm:text-2xl md:text-3xl font-bold"
+                    style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+                  >
+                    🫐 1키로
+                  </h3>
+                  <Apple className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" />
+                </div>
+              </div>
+              <div className="bg-white border-2 sm:border-4 border-purple-600 rounded-b-2xl overflow-hidden shadow-lg">
+                {BLUEBERRY_1KG.map((product, index) => (
+                  <PriceRow
+                    key={product.label + index}
+                    label={product.label}
+                    price={product.price}
+                    color="purple"
                     isFirst={index === 0}
                   />
                 ))}
@@ -243,10 +269,15 @@ function PriceRow({
 }: {
   label: string;
   price: string;
-  color: "red" | "orange";
+  color: "red" | "orange" | "purple";
   isFirst?: boolean;
 }) {
-  const textColor = color === "red" ? "text-red-700" : "text-orange-700";
+  const textColor =
+    color === "red"
+      ? "text-red-700"
+      : color === "orange"
+      ? "text-orange-700"
+      : "text-purple-700";
 
   return (
     <div

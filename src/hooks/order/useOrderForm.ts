@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/src/libs/supabase/client";
 
 export interface FormData {
   ordererName: string;
@@ -87,42 +88,46 @@ export function useOrderForm(): UseOrderFormReturn {
     setIsSubmitting(true);
 
     try {
-      // 상품 정보 파싱 (예: "5키로 16과 (4만5천원)" -> 각 부분 분리)
+      const supabase = createClient();
+
+      const { error: insertError } = await supabase.from("orders").insert({
+        product: selectedProduct,
+        orderer_name: formData.ordererName,
+        orderer_phone: formData.ordererPhone,
+        receiver_name: isSameAsOrderer
+          ? formData.ordererName
+          : formData.receiverName,
+        receiver_phone: isSameAsOrderer
+          ? formData.ordererPhone
+          : formData.receiverPhone,
+        address: formData.address,
+        detail_address: formData.detailAddress || null,
+        is_same_as_orderer: isSameAsOrderer,
+      });
+
+      if (insertError) {
+        console.error("주문 저장 실패:", insertError);
+        alert("주문 접수에 실패했습니다. 다시 시도해주세요.");
+        return;
+      }
+
+      // 사장님께 알림 SMS (실패해도 주문은 이미 DB에 저장됨 - 무시)
       const productInfo = selectedProduct.match(
-        /(\d+키로)\s+(\d+과)\s+\(([^)]+)\)/
+        /(\d+키로)\s+(\S+)\s+\(([^)]+)\)/
       );
       const weight = productInfo ? productInfo[1] : "";
       const count = productInfo ? productInfo[2] : "";
-      const price = productInfo ? productInfo[3] : "";
+      const productType = count === "블루베리" ? "블루베리" : "사과";
+      const notifyMessage = `[${productType} 주문 접수]\n상품: ${weight} ${count}\n주문자: ${formData.ordererName}\n\n관리자 페이지에서 확인해주세요.`;
 
-      let message = "";
-
-      const fullAddress = formData.detailAddress
-        ? `${formData.address} ${formData.detailAddress}`
-        : formData.address;
-
-      if (isSameAsOrderer) {
-        // 주문자와 받는 분이 동일한 경우
-        message = `[사과 주문 접수]\n상품: ${weight} ${count}\n가격: ${price}\n\n주문자: ${formData.ordererName}\n연락처: ${formData.ordererPhone}\n주소: ${fullAddress}`;
-      } else {
-        // 주문자와 받는 분이 다른 경우
-        message = `[사과 주문 접수]\n상품: ${weight} ${count}\n가격: ${price}\n\n주문자: ${formData.ordererName}\n주문자 연락처: ${formData.ordererPhone}\n\n받는 분: ${formData.receiverName}\n받는 분 연락처: ${formData.receiverPhone}\n주소: ${fullAddress}`;
-      }
-
-      console.log("보낼 메시지:", message);
       const songPhone = process.env.NEXT_PUBLIC_SONG_PHONE || "";
-      const res = await fetch("/api/send-sms", {
+      fetch("/api/send-sms", {
         method: "POST",
-        body: JSON.stringify({ phone: songPhone, message }),
-      });
+        body: JSON.stringify({ phone: songPhone, message: notifyMessage }),
+      }).catch((err) => console.error("알림 SMS 전송 실패:", err));
 
-      const result = await res.json();
-      if (result.ok) {
-        alert("문자 발송 완료!!!!");
-        router.push("/");
-      } else {
-        alert("문자 발송 실패!!!!");
-      }
+      alert("주문이 접수되었습니다!");
+      router.push("/");
     } catch (error) {
       console.error("주문 처리 중 오류:", error);
       alert("주문 처리 중 오류가 발생했습니다.");

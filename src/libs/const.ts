@@ -9,3 +9,5 @@ export const APPLE_10KG = [
   { label: "34과", price: "8만원" },
   { label: "38과", price: "7만3천원" },
 ];
+
+export const BLUEBERRY_1KG = [{ label: "블루베리", price: "3만5천원" }];

@@ -1,23 +1,11 @@
 import { NextResponse } from "next/server";
 import { sendPushToAll } from "@/src/libs/push";
 
-export async function POST(req: Request) {
+export async function POST() {
   try {
-    const { product, ordererName } = await req.json();
-
-    const productInfo: RegExpMatchArray | null = product?.match(
-      /(\d+키로)\s+(\d+과)\s+\(([^)]+)\)/,
-    );
-    const weight = productInfo ? productInfo[1] : "";
-    const count = productInfo ? productInfo[2] : "";
-    const productType = count === "블루베리" ? "블루베리" : "사과";
-
-    const title = `[${productType} 주문 접수]`;
-    const body = `${weight} ${count} / 주문자: ${ordererName ?? "(미입력)"}`;
-
     const result = await sendPushToAll({
-      title,
-      body,
+      title: "🍎 새 주문이 들어왔어요!",
+      body: "눌러서 확인하세요",
       url: "/admin",
       tag: "order",
     });

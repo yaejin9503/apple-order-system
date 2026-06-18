@@ -133,13 +133,9 @@ export function useOrderForm(): UseOrderFormReturn {
       }
 
       // 사장님께 웹푸시 알림 (실패해도 주문은 이미 DB에 저장됨 - 무시)
-      fetch("/api/push/notify-order", {
-        method: "POST",
-        body: JSON.stringify({
-          product: selectedProduct,
-          ordererName: formData.ordererName,
-        }),
-      }).catch((err) => console.error("푸시 알림 전송 실패:", err));
+      fetch("/api/push/notify-order", { method: "POST" }).catch((err) =>
+        console.error("푸시 알림 전송 실패:", err),
+      );
 
       alert("주문이 접수되었습니다!");
       router.push("/");

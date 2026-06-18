@@ -65,13 +65,13 @@ export default function ReceiverSection({
           <label className="block text-gray-700 font-bold mb-2 text-sm sm:text-base md:text-lg">
             주소 <span className="text-red-600">*</span>
           </label>
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full">
             <input
               type="text"
               required
               value={address}
               readOnly
-              className="flex-1 px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg sm:rounded-xl focus:border-orange-500 focus:outline-none transition-colors text-base sm:text-lg bg-gray-50 cursor-pointer"
+              className="w-2/3 flex-1 px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg sm:rounded-xl focus:border-orange-500 focus:outline-none transition-colors text-base sm:text-lg bg-gray-50 cursor-pointer"
               placeholder="주소찾기 버튼을 눌러주세요"
               onClick={onAddressSearch}
             />

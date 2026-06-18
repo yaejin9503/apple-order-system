@@ -42,11 +42,11 @@ export default function AdminOrdersClient({
 
   const toggleFlag = async (
     order: Order,
-    field: "paid" | "shipped" | "cancelled"
+    field: "paid" | "shipped" | "cancelled",
   ) => {
     const next = !order[field];
     setOrders((prev) =>
-      prev.map((o) => (o.id === order.id ? { ...o, [field]: next } : o))
+      prev.map((o) => (o.id === order.id ? { ...o, [field]: next } : o)),
     );
 
     const { error } = await supabase
@@ -57,7 +57,7 @@ export default function AdminOrdersClient({
     if (error) {
       alert(`업데이트 실패: ${error.message}`);
       setOrders((prev) =>
-        prev.map((o) => (o.id === order.id ? { ...o, [field]: !next } : o))
+        prev.map((o) => (o.id === order.id ? { ...o, [field]: !next } : o)),
       );
     }
   };
@@ -70,7 +70,7 @@ export default function AdminOrdersClient({
   const saveMemo = async (order: Order) => {
     const value = memoDraft.trim() || null;
     setOrders((prev) =>
-      prev.map((o) => (o.id === order.id ? { ...o, memo: value } : o))
+      prev.map((o) => (o.id === order.id ? { ...o, memo: value } : o)),
     );
     setEditingMemoId(null);
 
@@ -102,7 +102,7 @@ export default function AdminOrdersClient({
       unshipped: orders.filter((o) => !o.shipped && !o.cancelled).length,
       cancelled: orders.filter((o) => o.cancelled).length,
     }),
-    [orders]
+    [orders],
   );
 
   return (
@@ -165,10 +165,10 @@ export default function AdminOrdersClient({
                   order.cancelled
                     ? "border-purple-500 opacity-60"
                     : order.shipped
-                    ? "border-green-500"
-                    : order.paid
-                    ? "border-blue-500"
-                    : "border-red-500"
+                      ? "border-green-500"
+                      : order.paid
+                        ? "border-blue-500"
+                        : "border-red-500"
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
@@ -201,15 +201,7 @@ export default function AdminOrdersClient({
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-sm">
                       <Field
                         label="주문자"
-                        value={`${order.orderer_name} (${order.orderer_phone})`}
-                      />
-                      <Field
-                        label="받는 분"
-                        value={
-                          order.is_same_as_orderer
-                            ? "주문자와 동일"
-                            : `${order.receiver_name} (${order.receiver_phone})`
-                        }
+                        value={`${order.receiver_name} (${order.receiver_phone})`}
                       />
                       <Field
                         label="주소"
@@ -366,8 +358,10 @@ function ActionToggle({
   };
   const inactiveColors = {
     blue: "bg-white border-2 border-blue-300 text-blue-700 hover:bg-blue-50",
-    green: "bg-white border-2 border-green-300 text-green-700 hover:bg-green-50",
-    purple: "bg-white border-2 border-purple-300 text-purple-700 hover:bg-purple-50",
+    green:
+      "bg-white border-2 border-green-300 text-green-700 hover:bg-green-50",
+    purple:
+      "bg-white border-2 border-purple-300 text-purple-700 hover:bg-purple-50",
   };
   return (
     <button

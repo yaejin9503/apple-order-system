@@ -1,5 +1,6 @@
 import { Apple } from "lucide-react";
 import FormInput from "@/src/components/order/FormInput";
+import QuickReceiverInput from "@/src/components/order/QuickReceiverInput";
 
 interface ReceiverSectionProps {
   receiverName: string;
@@ -7,8 +8,17 @@ interface ReceiverSectionProps {
   address: string;
   detailAddress: string;
   isSameAsOrderer: boolean;
-  onReceiverChange: (field: "receiverName" | "receiverPhone" | "address" | "detailAddress", value: string) => void;
+  onReceiverChange: (
+    field: "receiverName" | "receiverPhone" | "address" | "detailAddress",
+    value: string,
+  ) => void;
   onAddressSearch: () => void;
+  onQuickFill: (info: {
+    name: string;
+    phone: string;
+    address: string;
+    detailAddress: string;
+  }) => void;
 }
 
 export default function ReceiverSection({
@@ -19,15 +29,18 @@ export default function ReceiverSection({
   isSameAsOrderer,
   onReceiverChange,
   onAddressSearch,
+  onQuickFill,
 }: ReceiverSectionProps) {
   return (
     <div className="mb-6 sm:mb-8">
       <div className="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-t-xl sm:rounded-t-2xl -mx-4 sm:-mx-6 md:-mx-8 mb-4 sm:mb-6">
         <h2 className="text-lg sm:text-xl md:text-2xl font-bold flex items-center gap-2">
           <Apple className="w-5 h-5 sm:w-6 sm:h-6" />
-          받는 분
+          주문 하시는 분
         </h2>
       </div>
+
+      <QuickReceiverInput onFilled={onQuickFill} disabled={isSameAsOrderer} />
 
       <div className="space-y-3 sm:space-y-4">
         <FormInput
@@ -78,9 +91,7 @@ export default function ReceiverSection({
           onChange={(value) => onReceiverChange("detailAddress", value)}
           disabled={!address}
           placeholder={
-            address
-              ? "상세주소를 입력해주세요"
-              : "먼저 주소를 검색해주세요"
+            address ? "상세주소를 입력해주세요" : "먼저 주소를 검색해주세요"
           }
         />
       </div>

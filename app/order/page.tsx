@@ -22,6 +22,7 @@ export default function OrderPage() {
     handleSameAsOrderer,
     handleOrdererChange,
     handleReceiverChange,
+    handleReceiverQuickFill,
     handleSubmit,
   } = useOrderForm();
 
@@ -49,7 +50,7 @@ export default function OrderPage() {
             onProductSelect={setSelectedProduct}
           />
 
-          <OrdererSection
+          {/* <OrdererSection
             ordererName={formData.ordererName}
             ordererPhone={formData.ordererPhone}
             onOrdererChange={handleOrdererChange}
@@ -67,7 +68,7 @@ export default function OrderPage() {
                 주문자와 받는 분이 동일합니다!
               </span>
             </label>
-          </div>
+          </div> */}
 
           <ReceiverSection
             receiverName={formData.receiverName}
@@ -77,6 +78,7 @@ export default function OrderPage() {
             isSameAsOrderer={isSameAsOrderer}
             onReceiverChange={handleReceiverChange}
             onAddressSearch={() => setIsPostcodeOpen(true)}
+            onQuickFill={handleReceiverQuickFill}
           />
 
           <div className="flex gap-2 sm:gap-4">

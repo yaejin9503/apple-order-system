@@ -24,6 +24,12 @@ export interface UseOrderFormReturn {
     value: string,
   ) => void;
   handleReceiverChange: (field: keyof FormData, value: string) => void;
+  handleReceiverQuickFill: (info: {
+    name: string;
+    phone: string;
+    address: string;
+    detailAddress: string;
+  }) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 }
 
@@ -75,6 +81,21 @@ export function useOrderForm(): UseOrderFormReturn {
 
   const handleReceiverChange = (field: keyof FormData, value: string) => {
     setFormData({ ...formData, [field]: value });
+  };
+
+  const handleReceiverQuickFill = (info: {
+    name: string;
+    phone: string;
+    address: string;
+    detailAddress: string;
+  }) => {
+    setFormData({
+      ...formData,
+      receiverName: info.name,
+      receiverPhone: info.phone,
+      address: info.address,
+      detailAddress: info.detailAddress,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -146,6 +167,7 @@ export function useOrderForm(): UseOrderFormReturn {
     handleSameAsOrderer,
     handleOrdererChange,
     handleReceiverChange,
+    handleReceiverQuickFill,
     handleSubmit,
   };
 }

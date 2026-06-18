@@ -64,7 +64,7 @@ export default function OrderPage() {
                 className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 rounded focus:ring-orange-500"
               />
               <span className="text-orange-900 font-bold text-sm sm:text-base md:text-lg">
-                주문자와 받는 분이 동일합니다
+                주문자와 받는 분이 동일합니다!
               </span>
             </label>
           </div>

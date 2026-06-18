@@ -18,8 +18,8 @@ import PushSubscribeButton from "@/src/components/admin/PushSubscribeButton";
 import ExportOrdersModal from "@/src/components/admin/ExportOrdersModal";
 import { usePullToRefresh } from "@/src/hooks/usePullToRefresh";
 import {
-  countPaidOrders,
-  formatPaidOrdersAsText,
+  countOrdersToForward,
+  formatOrdersToForwardAsText,
 } from "@/src/libs/exportOrders";
 
 type FilterKey = "all" | "unpaid" | "unshipped" | "active";
@@ -44,8 +44,11 @@ export default function AdminOrdersClient({
   const [memoDraft, setMemoDraft] = useState("");
   const [isExportOpen, setIsExportOpen] = useState(false);
 
-  const exportText = useMemo(() => formatPaidOrdersAsText(orders), [orders]);
-  const exportCount = useMemo(() => countPaidOrders(orders), [orders]);
+  const exportText = useMemo(
+    () => formatOrdersToForwardAsText(orders),
+    [orders],
+  );
+  const exportCount = useMemo(() => countOrdersToForward(orders), [orders]);
 
   const refreshOrders = useCallback(async () => {
     const { data, error } = await supabase

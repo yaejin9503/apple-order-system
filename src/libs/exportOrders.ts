@@ -14,11 +14,13 @@ function formatAddress(order: Order): string {
     : order.address;
 }
 
-export function formatPaidOrdersAsText(orders: Order[]): string {
-  const paid = orders.filter((o) => o.paid && !o.cancelled);
-  if (paid.length === 0) return "";
+export function formatOrdersToForwardAsText(orders: Order[]): string {
+  const target = orders.filter(
+    (o) => o.paid && !o.shipped && !o.cancelled,
+  );
+  if (target.length === 0) return "";
 
-  return paid
+  return target
     .map((o) => {
       const { name, price } = splitProduct(o.product);
       return [
@@ -32,6 +34,6 @@ export function formatPaidOrdersAsText(orders: Order[]): string {
     .join("\n\n");
 }
 
-export function countPaidOrders(orders: Order[]): number {
-  return orders.filter((o) => o.paid && !o.cancelled).length;
+export function countOrdersToForward(orders: Order[]): number {
+  return orders.filter((o) => o.paid && !o.shipped && !o.cancelled).length;
 }

@@ -54,7 +54,8 @@ export default function ExportOrdersModal({
             <textarea
               readOnly
               value={text}
-              className="w-full h-[50vh] p-3 border-2 border-gray-200 rounded-xl text-sm font-mono resize-none focus:outline-none focus:border-red-400 bg-gray-50"
+              className="w-full h-[50vh] p-3 border-2 border-gray-200 rounded-xl text-sm font-mono resize-none focus:outline-none focus:border-red-400 bg-gray-50 text-gray-900 opacity-100"
+              style={{ WebkitTextFillColor: "#111827", color: "#111827" }}
             />
           )}
         </div>

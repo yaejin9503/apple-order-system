@@ -142,10 +142,10 @@ export function useOrderForm(): UseOrderFormReturn {
       const notifyMessage = `[${productType} 주문 접수]\n상품: ${weight} ${count}\n주문자: ${formData.ordererName}\n\n관리자 페이지에서 확인해주세요.`;
 
       const songPhone = process.env.NEXT_PUBLIC_SONG_PHONE || "";
-      fetch("/api/send-sms", {
-        method: "POST",
-        body: JSON.stringify({ phone: songPhone, message: notifyMessage }),
-      }).catch((err) => console.error("알림 SMS 전송 실패:", err));
+      // fetch("/api/send-sms", {
+      //   method: "POST",
+      //   body: JSON.stringify({ phone: songPhone, message: notifyMessage }),
+      // }).catch((err) => console.error("알림 SMS 전송 실패:", err));
 
       alert("주문이 접수되었습니다!");
       router.push("/");

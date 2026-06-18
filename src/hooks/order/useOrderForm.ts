@@ -21,7 +21,7 @@ export interface UseOrderFormReturn {
   handleSameAsOrderer: (checked: boolean) => void;
   handleOrdererChange: (
     field: "ordererName" | "ordererPhone",
-    value: string
+    value: string,
   ) => void;
   handleReceiverChange: (field: keyof FormData, value: string) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
@@ -58,7 +58,7 @@ export function useOrderForm(): UseOrderFormReturn {
 
   const handleOrdererChange = (
     field: "ordererName" | "ordererPhone",
-    value: string
+    value: string,
   ) => {
     const newFormData = { ...formData, [field]: value };
     setFormData(newFormData);
@@ -113,7 +113,7 @@ export function useOrderForm(): UseOrderFormReturn {
 
       // 사장님께 알림 SMS (실패해도 주문은 이미 DB에 저장됨 - 무시)
       const productInfo = selectedProduct.match(
-        /(\d+키로)\s+(\S+)\s+\(([^)]+)\)/
+        /(\d+키로)\s+(\d+과)\s+\(([^)]+)\)/,
       );
       const weight = productInfo ? productInfo[1] : "";
       const count = productInfo ? productInfo[2] : "";

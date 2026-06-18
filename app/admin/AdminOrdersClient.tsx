@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { LogOut, Apple, Check, X, Truck, Pencil } from "lucide-react";
 import { createClient } from "@/src/libs/supabase/client";
 import { Order } from "@/src/types/order";
+import PushSubscribeButton from "@/src/components/admin/PushSubscribeButton";
 
 type FilterKey = "all" | "unpaid" | "unshipped" | "active";
 
@@ -117,13 +118,16 @@ export default function AdminOrdersClient({
             <Apple className="w-7 h-7 sm:w-8 sm:h-8 fill-current" />
             주문 관리
           </h1>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1 sm:gap-2 bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 sm:px-4 rounded-full text-sm font-bold transition-colors"
-          >
-            <LogOut className="w-4 h-4" />
-            로그아웃
-          </button>
+          <div className="flex items-center gap-2">
+            <PushSubscribeButton />
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1 sm:gap-2 bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 sm:px-4 rounded-full text-sm font-bold transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              로그아웃
+            </button>
+          </div>
         </div>
 
         {/* Stats */}

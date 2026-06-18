@@ -1,0 +1,38 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="120" fill="#FFF5F0"/>
+
+  <!-- Apple -->
+  <circle cx="256" cy="280" r="120" fill="#E53935"/>
+
+  <!-- Leaf -->
+
+<path d="M300 120
+           C340 90, 390 100, 400 140
+           C360 160, 320 155, 300 120Z"
+        fill="#4CAF50"/>
+
+  <!-- Stem -->
+
+<rect x="246" y="120" width="20" height="60" rx="10" fill="#795548"
+        transform="rotate(-15 256 150)"/>
+
+  <!-- Order Clipboard -->
+  <rect x="190" y="220" width="132" height="160" rx="16" fill="white"/>
+  <rect x="225" y="200" width="62" height="28" rx="8" fill="#E0E0E0"/>
+
+  <!-- List -->
+  <line x1="220" y1="265" x2="295" y2="265" stroke="#BDBDBD" stroke-width="10" stroke-linecap="round"/>
+  <line x1="220" y1="305" x2="295" y2="305" stroke="#BDBDBD" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- Check -->
+
+<path d="M225 345
+           L245 365
+           L290 320"
+        fill="none"
+        stroke="#4CAF50"
+        stroke-width="14"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+</svg>

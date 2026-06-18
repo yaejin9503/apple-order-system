@@ -132,20 +132,14 @@ export function useOrderForm(): UseOrderFormReturn {
         return;
       }
 
-      // 사장님께 알림 SMS (실패해도 주문은 이미 DB에 저장됨 - 무시)
-      const productInfo = selectedProduct.match(
-        /(\d+키로)\s+(\d+과)\s+\(([^)]+)\)/,
-      );
-      const weight = productInfo ? productInfo[1] : "";
-      const count = productInfo ? productInfo[2] : "";
-      const productType = count === "블루베리" ? "블루베리" : "사과";
-      const notifyMessage = `[${productType} 주문 접수]\n상품: ${weight} ${count}\n주문자: ${formData.ordererName}\n\n관리자 페이지에서 확인해주세요.`;
-
-      const songPhone = process.env.NEXT_PUBLIC_SONG_PHONE || "";
-      fetch("/api/send-sms", {
+      // 사장님께 웹푸시 알림 (실패해도 주문은 이미 DB에 저장됨 - 무시)
+      fetch("/api/push/notify-order", {
         method: "POST",
-        body: JSON.stringify({ phone: songPhone, message: notifyMessage }),
-      }).catch((err) => console.error("알림 SMS 전송 실패:", err));
+        body: JSON.stringify({
+          product: selectedProduct,
+          ordererName: formData.ordererName,
+        }),
+      }).catch((err) => console.error("푸시 알림 전송 실패:", err));
 
       alert("주문이 접수되었습니다!");
       router.push("/");

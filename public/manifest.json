@@ -1,0 +1,26 @@
+{
+  "name": "사과 주문 신청서",
+  "short_name": "사과주문",
+  "description": "사과 주문 접수 및 관리",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3f4f6",
+  "theme_color": "#dc2626",
+  "lang": "ko-KR",
+  "icons": [
+    {
+      "src": "/icons/apple-icon.svg",
+      "sizes": "192x192 512x512 any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/apple-icon-maskable.svg",
+      "sizes": "192x192 512x512 any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -66,7 +66,8 @@ export default function QuickReceiverInput({
         받는 분 정보 한번에 붙여넣기
       </label>
       <p className="text-xs sm:text-sm text-gray-600 mb-2">
-        주소 · 이름 · 연락처가 포함된 문자를 그대로 붙여넣고 아래 버튼을 눌러주세요.
+        주소 · 이름 · 연락처가 포함된 문자를 그대로 붙여넣고 아래 버튼을
+        눌러주세요.
       </p>
       <textarea
         value={text}
@@ -74,7 +75,9 @@ export default function QuickReceiverInput({
         disabled={disabled || isLoading}
         rows={5}
         className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg sm:rounded-xl focus:border-yellow-500 focus:outline-none text-sm sm:text-base resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-        placeholder={"예시\n서울시 서대문구 모래내로 24길 33\n명진아트빌 A동 401호\n010 3138 9597\n김예진"}
+        placeholder={
+          "예시\n서울시 서대문구 모래내로 XX길 XX\n X동 XX호\n010 XXXX XXXX\n홍길동"
+        }
       />
       {error && (
         <p className="text-red-600 text-xs sm:text-sm mt-2 whitespace-pre-line font-bold">

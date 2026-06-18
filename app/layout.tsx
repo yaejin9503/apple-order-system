@@ -23,8 +23,13 @@ export const metadata: Metadata = {
     title: "사과주문",
   },
   icons: {
-    icon: "/icons/apple-icon.svg",
-    apple: "/icons/apple-icon.svg",
+    icon: [
+      { url: "/icons/apple-icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/apple-icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/icons/apple-icon-180.png", sizes: "180x180", type: "image/png" },
+    ],
   },
 };
 

@@ -1,7 +1,12 @@
 "use client";
 
 import { ImageWithFallback } from "@/src/components/ImageWithFallback";
-import { APPLE_10KG, APPLE_5KG, BLUEBERRY_1KG } from "@/src/libs/const";
+import {
+  APPLE_10KG,
+  APPLE_5KG,
+  BLUEBERRY_1KG,
+  PUMPKIN_10KG,
+} from "@/src/libs/const";
 import { Apple, Truck, Star, Copy, Check } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -13,7 +18,7 @@ export default function App() {
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(
-        process.env.NEXT_PUBLIC_ACCOUNT || ""
+        process.env.NEXT_PUBLIC_ACCOUNT || "",
       );
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -69,13 +74,13 @@ export default function App() {
                   className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-1 sm:mb-2 drop-shadow-lg font-black"
                   style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
                 >
-                  🍎 송하 농장
+                  송하 농장
                 </h1>
                 <p
                   className="text-sm sm:text-lg md:text-xl lg:text-2xl opacity-90 font-medium"
                   style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
                 >
-                  신선한 사과를 직접 농장에서 배송합니다
+                  신선한 농산물을 직접 농장에서 배송합니다
                 </p>
               </div>
             </div>
@@ -177,6 +182,32 @@ export default function App() {
                 ))}
               </div>
             </div>
+
+            {/* 호박 10kg Section */}
+            <div>
+              <div className="bg-gradient-to-r from-green-600 to-green-500 text-white px-4 py-3 sm:px-6 sm:py-4 rounded-t-2xl shadow-lg">
+                <div className="flex items-center justify-between">
+                  <h3
+                    className="text-xl sm:text-2xl md:text-3xl font-bold"
+                    style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+                  >
+                    🎃 10키로
+                  </h3>
+                  <Apple className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" />
+                </div>
+              </div>
+              <div className="bg-white border-2 sm:border-4 border-green-600 rounded-b-2xl overflow-hidden shadow-lg">
+                {PUMPKIN_10KG.map((product, index) => (
+                  <PriceRow
+                    key={product.label + index}
+                    label={product.label}
+                    price={product.price}
+                    color="green"
+                    isFirst={index === 0}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Notice */}
@@ -269,15 +300,17 @@ function PriceRow({
 }: {
   label: string;
   price: string;
-  color: "red" | "orange" | "purple";
+  color: "red" | "orange" | "purple" | "green";
   isFirst?: boolean;
 }) {
   const textColor =
     color === "red"
       ? "text-red-700"
       : color === "orange"
-      ? "text-orange-700"
-      : "text-purple-700";
+        ? "text-orange-700"
+        : color === "purple"
+          ? "text-purple-700"
+          : "text-green-700";
 
   return (
     <div

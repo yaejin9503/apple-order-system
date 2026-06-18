@@ -1,4 +1,9 @@
-import { APPLE_5KG, APPLE_10KG, BLUEBERRY_1KG } from "@/src/libs/const";
+import {
+  APPLE_5KG,
+  APPLE_10KG,
+  BLUEBERRY_1KG,
+  PUMPKIN_10KG,
+} from "@/src/libs/const";
 
 interface ProductSelectorProps {
   selectedProduct: string;
@@ -101,6 +106,37 @@ export default function ProductSelector({
                     {product.label}
                   </span>
                   <span className="text-base sm:text-lg font-bold text-purple-700">
+                    {product.price}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 호박 10kg */}
+        <div className="space-y-2 sm:space-y-3">
+          <h3 className="text-base sm:text-lg font-bold text-green-600 mb-2">
+            10키로
+          </h3>
+          {PUMPKIN_10KG.map((product) => {
+            const productValue = `10키로 ${product.label} (${product.price})`;
+            return (
+              <button
+                key={`pumpkin-10kg-${product.label}`}
+                type="button"
+                onClick={() => onProductSelect(productValue)}
+                className={`w-full p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 ${
+                  selectedProduct === productValue
+                    ? "border-green-600 bg-green-50 shadow-lg scale-105"
+                    : "border-gray-300 bg-white hover:border-green-400 hover:bg-green-50"
+                }`}
+              >
+                <div className="flex justify-between items-center">
+                  <span className="text-sm sm:text-base font-bold text-gray-700">
+                    {product.label}
+                  </span>
+                  <span className="text-base sm:text-lg font-bold text-green-700">
                     {product.price}
                   </span>
                 </div>

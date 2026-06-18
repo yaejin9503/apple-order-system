@@ -11,3 +11,5 @@ export const APPLE_10KG = [
 ];
 
 export const BLUEBERRY_1KG = [{ label: "블루베리", price: "3만5천원" }];
+
+export const PUMPKIN_10KG = [{ label: "호박", price: "5만5천원" }];

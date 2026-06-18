@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, Apple, Check, X, Truck, Pencil } from "lucide-react";
+import { LogOut, Apple, Check, X, Truck, Pencil, RefreshCw } from "lucide-react";
 import { createClient } from "@/src/libs/supabase/client";
 import { Order } from "@/src/types/order";
 import PushSubscribeButton from "@/src/components/admin/PushSubscribeButton";
+import { usePullToRefresh } from "@/src/hooks/usePullToRefresh";
 
 type FilterKey = "all" | "unpaid" | "unshipped" | "active";
 
@@ -27,6 +28,18 @@ export default function AdminOrdersClient({
   const [filter, setFilter] = useState<FilterKey>("all");
   const [editingMemoId, setEditingMemoId] = useState<string | null>(null);
   const [memoDraft, setMemoDraft] = useState("");
+
+  const refreshOrders = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (!error && data) setOrders(data as Order[]);
+  }, [supabase]);
+
+  const { pullDistance, isRefreshing, threshold } = usePullToRefresh({
+    onRefresh: refreshOrders,
+  });
 
   const filtered = useMemo(() => {
     switch (filter) {
@@ -106,11 +119,35 @@ export default function AdminOrdersClient({
     [orders],
   );
 
+  const pullProgress = Math.min(pullDistance / threshold, 1);
+  const showIndicator = pullDistance > 0 || isRefreshing;
+
   return (
     <div
       className="min-h-screen bg-gray-100 p-4 sm:p-6"
-      style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+      style={{
+        fontFamily: "'Noto Sans KR', sans-serif",
+        transform: `translateY(${isRefreshing ? threshold : pullDistance}px)`,
+        transition: pullDistance === 0 || isRefreshing ? "transform 0.2s" : "none",
+      }}
     >
+      {showIndicator && (
+        <div
+          className="fixed top-0 left-1/2 -translate-x-1/2 z-50 bg-white rounded-full shadow-lg p-2 flex items-center justify-center"
+          style={{
+            transform: `translateX(-50%) translateY(${isRefreshing ? threshold - 40 : pullDistance - 40}px)`,
+            opacity: pullProgress,
+            transition: pullDistance === 0 || isRefreshing ? "transform 0.2s, opacity 0.2s" : "none",
+          }}
+        >
+          <RefreshCw
+            className={`w-6 h-6 text-red-600 ${isRefreshing ? "animate-spin" : ""}`}
+            style={{
+              transform: isRefreshing ? undefined : `rotate(${pullProgress * 360}deg)`,
+            }}
+          />
+        </div>
+      )}
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-4 sm:mb-6">

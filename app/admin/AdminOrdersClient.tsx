@@ -2,11 +2,25 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, Apple, Check, X, Truck, Pencil, RefreshCw } from "lucide-react";
+import {
+  LogOut,
+  Apple,
+  Check,
+  X,
+  Truck,
+  Pencil,
+  RefreshCw,
+  FileText,
+} from "lucide-react";
 import { createClient } from "@/src/libs/supabase/client";
 import { Order } from "@/src/types/order";
 import PushSubscribeButton from "@/src/components/admin/PushSubscribeButton";
+import ExportOrdersModal from "@/src/components/admin/ExportOrdersModal";
 import { usePullToRefresh } from "@/src/hooks/usePullToRefresh";
+import {
+  countPaidOrders,
+  formatPaidOrdersAsText,
+} from "@/src/libs/exportOrders";
 
 type FilterKey = "all" | "unpaid" | "unshipped" | "active";
 
@@ -28,6 +42,10 @@ export default function AdminOrdersClient({
   const [filter, setFilter] = useState<FilterKey>("all");
   const [editingMemoId, setEditingMemoId] = useState<string | null>(null);
   const [memoDraft, setMemoDraft] = useState("");
+  const [isExportOpen, setIsExportOpen] = useState(false);
+
+  const exportText = useMemo(() => formatPaidOrdersAsText(orders), [orders]);
+  const exportCount = useMemo(() => countPaidOrders(orders), [orders]);
 
   const refreshOrders = useCallback(async () => {
     const { data, error } = await supabase
@@ -175,8 +193,8 @@ export default function AdminOrdersClient({
           <StatCard label="취소" value={counts.cancelled} color="purple" />
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-wrap gap-2 mb-4">
+        {/* Filters + Export */}
+        <div className="flex flex-wrap gap-2 mb-4 items-center">
           {FILTERS.map((f) => (
             <button
               key={f.key}
@@ -190,6 +208,17 @@ export default function AdminOrdersClient({
               {f.label}
             </button>
           ))}
+          <div className="flex-1" />
+          <button
+            onClick={() => setIsExportOpen(true)}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border-2 bg-white border-blue-400 text-blue-700 hover:bg-blue-50 transition-colors"
+          >
+            <FileText className="w-4 h-4" />
+            입금 완료 내보내기
+            <span className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">
+              {exportCount}
+            </span>
+          </button>
         </div>
 
         {/* Orders */}
@@ -329,6 +358,13 @@ export default function AdminOrdersClient({
           </div>
         )}
       </div>
+
+      <ExportOrdersModal
+        isOpen={isExportOpen}
+        onClose={() => setIsExportOpen(false)}
+        text={exportText}
+        count={exportCount}
+      />
     </div>
   );
 }

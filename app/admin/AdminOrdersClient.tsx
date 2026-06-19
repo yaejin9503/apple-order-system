@@ -86,6 +86,11 @@ export default function AdminOrdersClient({
       return;
     }
 
+    if (field === "paid" && !next && order.shipped) {
+      alert("발송완료를 먼저 해제해주세요.");
+      return;
+    }
+
     setOrders((prev) =>
       prev.map((o) => (o.id === order.id ? { ...o, [field]: next } : o)),
     );

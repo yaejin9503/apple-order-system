@@ -9,6 +9,7 @@ export interface FormData {
   receiverPhone: string;
   address: string;
   detailAddress: string;
+  memo: string;
 }
 
 export interface UseOrderFormReturn {
@@ -30,6 +31,7 @@ export interface UseOrderFormReturn {
     address: string;
     detailAddress: string;
   }) => void;
+  handleMemoChange: (value: string) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 }
 
@@ -45,6 +47,7 @@ export function useOrderForm(): UseOrderFormReturn {
     receiverPhone: "",
     address: "",
     detailAddress: "",
+    memo: "",
   });
 
   const handleProductSelect = (productId: string) => {
@@ -81,6 +84,10 @@ export function useOrderForm(): UseOrderFormReturn {
 
   const handleReceiverChange = (field: keyof FormData, value: string) => {
     setFormData({ ...formData, [field]: value });
+  };
+
+  const handleMemoChange = (value: string) => {
+    setFormData({ ...formData, memo: value });
   };
 
   const handleReceiverQuickFill = (info: {
@@ -124,6 +131,7 @@ export function useOrderForm(): UseOrderFormReturn {
         address: formData.address,
         detail_address: formData.detailAddress || null,
         is_same_as_orderer: isSameAsOrderer,
+        memo: formData.memo.trim() || null,
       });
 
       if (insertError) {

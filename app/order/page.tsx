@@ -7,10 +7,11 @@ import LoadingModal from "@/src/components/LoadingModal";
 import { useOrderForm } from "@/src/hooks/order/useOrderForm";
 import { Postcode } from "@/src/components/Postcode";
 import OrderPageHeader from "@/src/components/order/OrderPageHeader";
-import AccountInfo from "@/src/components/order/AccountInfo";
 import ProductSelector from "@/src/components/order/ProductSelector";
 import OrdererSection from "@/src/components/order/OrdererSection";
 import ReceiverSection from "@/src/components/order/ReceiverSection";
+import AccountInfo from "@/src/components/order/AccountInfo";
+import { Landmark } from "lucide-react";
 
 export default function OrderPage() {
   const {
@@ -39,7 +40,6 @@ export default function OrderPage() {
     >
       <div className="max-w-3xl mx-auto">
         <OrderPageHeader />
-        <AccountInfo />
 
         <form
           onSubmit={handleSubmit}
@@ -80,6 +80,19 @@ export default function OrderPage() {
             onAddressSearch={() => setIsPostcodeOpen(true)}
             onQuickFill={handleReceiverQuickFill}
           />
+
+          <div className="mb-6 sm:mb-8">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">
+              💳 결제 방법
+            </h3>
+            <div className="flex items-center justify-center gap-2 p-4 sm:p-5 rounded-xl border-2 border-yellow-500 bg-yellow-50 text-yellow-900 font-bold text-sm sm:text-base shadow-md">
+              <Landmark className="w-5 h-5 sm:w-6 sm:h-6" />
+              무통장 입금
+            </div>
+            <div className="mt-3 sm:mt-4">
+              <AccountInfo />
+            </div>
+          </div>
 
           <div className="flex gap-2 sm:gap-4">
             <button

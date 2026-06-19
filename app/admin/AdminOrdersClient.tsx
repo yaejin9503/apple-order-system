@@ -80,6 +80,12 @@ export default function AdminOrdersClient({
     field: "paid" | "shipped" | "cancelled",
   ) => {
     const next = !order[field];
+
+    if (field === "shipped" && next && !order.paid) {
+      alert("입금완료를 먼저 클릭해주세요.");
+      return;
+    }
+
     setOrders((prev) =>
       prev.map((o) => (o.id === order.id ? { ...o, [field]: next } : o)),
     );

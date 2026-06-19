@@ -7,11 +7,11 @@ export async function POST(req: Request) {
       process.env.NEXT_PUBLIC_SOLAPI_API_KEY,
       process.env.NEXT_PUBLIC_SOLAPI_API_SECRET
     );
-    const { phone, message } = await req.json();
+    const { phone, message, from } = await req.json();
 
     const result = await messageService.send({
       to: phone,
-      from: process.env.NEXT_PUBLIC_SMS_FROM,
+      from: from || process.env.NEXT_PUBLIC_SMS_FROM,
       text: message,
     });
 

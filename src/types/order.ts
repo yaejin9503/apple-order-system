@@ -13,4 +13,5 @@ export interface Order {
   shipped: boolean;
   cancelled: boolean;
   memo: string | null;
+  sms_sent_at: string | null;
 }

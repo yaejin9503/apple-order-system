@@ -13,6 +13,7 @@ import {
   RefreshCw,
   FileText,
   Package,
+  MessageSquare,
 } from "lucide-react";
 import { createClient } from "@/src/libs/supabase/client";
 import { Order } from "@/src/types/order";
@@ -45,6 +46,7 @@ export default function AdminOrdersClient({
   const [editingMemoId, setEditingMemoId] = useState<string | null>(null);
   const [memoDraft, setMemoDraft] = useState("");
   const [isExportOpen, setIsExportOpen] = useState(false);
+  const [sendingSmsId, setSendingSmsId] = useState<string | null>(null);
 
   const exportText = useMemo(
     () => formatOrdersToForwardAsText(orders),
@@ -129,6 +131,59 @@ export default function AdminOrdersClient({
 
     if (error) {
       alert(`메모 저장 실패: ${error.message}`);
+    }
+  };
+
+  const sendCustomerSms = async (order: Order) => {
+    const fullAddress = `${order.address}${order.detail_address ? ` ${order.detail_address}` : ""}`;
+    const message = `[송하농장]\n\n${order.product} 주문이 정상적으로 접수되었습니다.\n배송지: ${fullAddress}\n영업일 기준 1~3일 이내에 발송해 드리겠습니다.\n\n감사합니다.`;
+
+    const confirmMsg = order.sms_sent_at
+      ? `이미 ${formatDate(order.sms_sent_at)}에 문자를 전송했습니다. 다시 전송할까요?`
+      : `${order.receiver_name}님(${order.receiver_phone})께 주문 확인 문자를 전송할까요?`;
+    if (!confirm(confirmMsg)) {
+      return;
+    }
+
+    setSendingSmsId(order.id);
+    try {
+      const res = await fetch("/api/send-sms", {
+        method: "POST",
+        body: JSON.stringify({
+          phone: order.receiver_phone,
+          message,
+          from: process.env.NEXT_PUBLIC_SONG_PHONE,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        alert(`문자 전송 실패: ${data.error ?? res.statusText}`);
+        return;
+      }
+
+      const sentAt = new Date().toISOString();
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.id === order.id ? { ...o, sms_sent_at: sentAt } : o,
+        ),
+      );
+
+      const { error: updateError } = await supabase
+        .from("orders")
+        .update({ sms_sent_at: sentAt })
+        .eq("id", order.id);
+
+      if (updateError) {
+        console.error("sms_sent_at 저장 실패:", updateError);
+        alert(`문자는 전송됐지만 기록 저장에 실패했습니다: ${updateError.message}`);
+        return;
+      }
+
+      alert("문자가 전송되었습니다.");
+    } catch (err) {
+      alert(`문자 전송 실패: ${String(err)}`);
+    } finally {
+      setSendingSmsId(null);
     }
   };
 
@@ -285,6 +340,11 @@ export default function AdminOrdersClient({
                           발송완료
                         </span>
                       )}
+                      {order.sms_sent_at && !order.cancelled && (
+                        <span className="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                          문자전송 {formatDate(order.sms_sent_at)}
+                        </span>
+                      )}
                     </div>
 
                     <p className="text-base sm:text-lg font-bold text-gray-900 mb-2">
@@ -366,6 +426,23 @@ export default function AdminOrdersClient({
                       color="green"
                       disabled={order.cancelled}
                     />
+                    <button
+                      onClick={() => sendCustomerSms(order)}
+                      disabled={
+                        order.cancelled ||
+                        !order.paid ||
+                        !order.shipped ||
+                        sendingSmsId === order.id
+                      }
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed bg-white border-2 border-amber-300 text-amber-700 hover:bg-amber-50"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                      {sendingSmsId === order.id
+                        ? "전송중..."
+                        : order.sms_sent_at
+                          ? "문자 재전송"
+                          : "문자 전송"}
+                    </button>
                     <ActionToggle
                       active={order.cancelled}
                       onClick={() => toggleFlag(order, "cancelled")}

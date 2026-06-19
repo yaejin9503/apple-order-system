@@ -161,6 +161,7 @@ export function useOrderForm(): UseOrderFormReturn {
     isSameAsOrderer,
     formData,
     isSubmitting,
+    handleMemoChange,
     handleProductSelect,
     handleSameAsOrderer,
     handleOrdererChange,

@@ -1,31 +1,34 @@
-"use client";
-
 import { ImageWithFallback } from "@/src/components/ImageWithFallback";
+import AccountInfo from "@/src/components/order/AccountInfo";
+import { createClient } from "@/src/libs/supabase/server";
 import {
-  APPLE_10KG,
-  APPLE_5KG,
-  BLUEBERRY_1KG,
-  PUMPKIN_10KG,
-} from "@/src/libs/const";
-import { Apple, Truck, Star, Copy, Check } from "lucide-react";
+  PRODUCT_CATEGORIES,
+  ProductCategoryMeta,
+} from "@/src/libs/productCategories";
+import { Product, ProductCategory } from "@/src/types/product";
+import { Apple, Truck, Star } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 
-export default function App() {
-  const [copied, setCopied] = useState(false);
-  const accountNumber = `${process.env.NEXT_PUBLIC_ACCOUNT} 카카오뱅크 송상은`;
+export const dynamic = "force-dynamic";
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(
-        process.env.NEXT_PUBLIC_ACCOUNT || "",
-      );
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("복사 실패:", err);
-    }
+export default async function App() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("products")
+    .select("*")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+
+  const products = (data ?? []) as Product[];
+  const grouped: Record<ProductCategory, Product[]> = {
+    apple_5kg: [],
+    apple_10kg: [],
+    blueberry_1kg: [],
+    pumpkin_10kg: [],
   };
+  for (const p of products) {
+    grouped[p.category]?.push(p);
+  }
 
   return (
     <div
@@ -105,109 +108,17 @@ export default function App() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
-            {/* 5kg Section */}
-            <div>
-              <div className="bg-gradient-to-r from-red-600 to-red-500 text-white px-4 py-3 sm:px-6 sm:py-4 rounded-t-2xl shadow-lg">
-                <div className="flex items-center justify-between">
-                  <h3
-                    className="text-xl sm:text-2xl md:text-3xl font-bold"
-                    style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
-                  >
-                    🍎 5키로
-                  </h3>
-                  <Apple className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" />
-                </div>
-              </div>
-              <div className="bg-white border-2 sm:border-4 border-red-600 rounded-b-2xl overflow-hidden shadow-lg">
-                {APPLE_5KG.map((product, index) => (
-                  <PriceRow
-                    key={product.label + index}
-                    label={product.label}
-                    price={product.price}
-                    color="red"
-                    isFirst={index === 0}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* 10kg Section */}
-            <div>
-              <div className="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-4 py-3 sm:px-6 sm:py-4 rounded-t-2xl shadow-lg">
-                <div className="flex items-center justify-between">
-                  <h3
-                    className="text-xl sm:text-2xl md:text-3xl font-bold"
-                    style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
-                  >
-                    🍎 10키로
-                  </h3>
-                  <Apple className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" />
-                </div>
-              </div>
-              <div className="bg-white border-2 sm:border-4 border-orange-600 rounded-b-2xl overflow-hidden shadow-lg">
-                {APPLE_10KG.map((product, index) => (
-                  <PriceRow
-                    key={product.label + index}
-                    label={product.label}
-                    price={product.price}
-                    color="orange"
-                    isFirst={index === 0}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* 블루베리 1kg Section */}
-            <div>
-              <div className="bg-gradient-to-r from-purple-600 to-purple-500 text-white px-4 py-3 sm:px-6 sm:py-4 rounded-t-2xl shadow-lg">
-                <div className="flex items-center justify-between">
-                  <h3
-                    className="text-xl sm:text-2xl md:text-3xl font-bold"
-                    style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
-                  >
-                    🫐 1키로
-                  </h3>
-                  <Apple className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" />
-                </div>
-              </div>
-              <div className="bg-white border-2 sm:border-4 border-purple-600 rounded-b-2xl overflow-hidden shadow-lg">
-                {BLUEBERRY_1KG.map((product, index) => (
-                  <PriceRow
-                    key={product.label + index}
-                    label={product.label}
-                    price={product.price}
-                    color="purple"
-                    isFirst={index === 0}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* 호박 10kg Section */}
-            <div>
-              <div className="bg-gradient-to-r from-green-600 to-green-500 text-white px-4 py-3 sm:px-6 sm:py-4 rounded-t-2xl shadow-lg">
-                <div className="flex items-center justify-between">
-                  <h3
-                    className="text-xl sm:text-2xl md:text-3xl font-bold"
-                    style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
-                  >
-                    🎃 10키로
-                  </h3>
-                  <Apple className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" />
-                </div>
-              </div>
-              <div className="bg-white border-2 sm:border-4 border-green-600 rounded-b-2xl overflow-hidden shadow-lg">
-                {PUMPKIN_10KG.map((product, index) => (
-                  <PriceRow
-                    key={product.label + index}
-                    label={product.label}
-                    price={product.price}
-                    color="green"
-                    isFirst={index === 0}
-                  />
-                ))}
-              </div>
-            </div>
+            {PRODUCT_CATEGORIES.map((cat) => {
+              const items = grouped[cat.key];
+              if (items.length === 0) return null;
+              return (
+                <CategorySection
+                  key={cat.key}
+                  category={cat}
+                  products={items}
+                />
+              );
+            })}
           </div>
 
           {/* Notice */}
@@ -232,35 +143,7 @@ export default function App() {
           </div>
 
           {/* Account Info */}
-          <div className="bg-gradient-to-r from-yellow-100 to-yellow-50 border-2 border-yellow-500 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 shadow-lg">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex-1 min-w-0">
-                <p className="text-yellow-900 text-xs sm:text-sm font-bold mb-1">
-                  입금 계좌
-                </p>
-                <p className="text-yellow-800 text-sm sm:text-base md:text-xl font-bold break-all">
-                  {accountNumber}
-                </p>
-              </div>
-              <button
-                onClick={handleCopy}
-                className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-lg text-sm sm:text-base font-bold transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-1 sm:gap-2 shadow-md shrink-0"
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span className="hidden sm:inline">복사됨!</span>
-                    <span className="sm:hidden">✓</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span className="hidden sm:inline">복사</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
+          <AccountInfo />
 
           {/* Order Button */}
           <div className="flex justify-center">
@@ -287,6 +170,59 @@ export default function App() {
             </Link>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+const HEADER_GRADIENTS: Record<ProductCategoryMeta["color"], string> = {
+  red: "from-red-600 to-red-500",
+  orange: "from-orange-600 to-orange-500",
+  purple: "from-purple-600 to-purple-500",
+  green: "from-green-600 to-green-500",
+};
+
+const BORDER_COLORS: Record<ProductCategoryMeta["color"], string> = {
+  red: "border-red-600",
+  orange: "border-orange-600",
+  purple: "border-purple-600",
+  green: "border-green-600",
+};
+
+function CategorySection({
+  category,
+  products,
+}: {
+  category: ProductCategoryMeta;
+  products: Product[];
+}) {
+  return (
+    <div>
+      <div
+        className={`bg-gradient-to-r ${HEADER_GRADIENTS[category.color]} text-white px-4 py-3 sm:px-6 sm:py-4 rounded-t-2xl shadow-lg`}
+      >
+        <div className="flex items-center justify-between">
+          <h3
+            className="text-xl sm:text-2xl md:text-3xl font-bold"
+            style={{ fontFamily: "'Noto Sans KR', sans-serif" }}
+          >
+            {category.emoji} {category.title}
+          </h3>
+          <Apple className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" />
+        </div>
+      </div>
+      <div
+        className={`bg-white border-2 sm:border-4 ${BORDER_COLORS[category.color]} rounded-b-2xl overflow-hidden shadow-lg`}
+      >
+        {products.map((product, index) => (
+          <PriceRow
+            key={product.id}
+            label={product.label}
+            price={product.price}
+            color={category.color}
+            isFirst={index === 0}
+          />
+        ))}
       </div>
     </div>
   );

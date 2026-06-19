@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   LogOut,
   Apple,
@@ -11,6 +12,7 @@ import {
   Pencil,
   RefreshCw,
   FileText,
+  Package,
 } from "lucide-react";
 import { createClient } from "@/src/libs/supabase/client";
 import { Order } from "@/src/types/order";
@@ -189,6 +191,13 @@ export default function AdminOrdersClient({
           </h1>
           <div className="flex items-center gap-2">
             <PushSubscribeButton />
+            <Link
+              href="/admin/products"
+              className="flex items-center gap-1 sm:gap-2 bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 sm:px-4 rounded-full text-sm font-bold transition-colors"
+            >
+              <Package className="w-4 h-4" />
+              상품 관리
+            </Link>
             <button
               onClick={handleLogout}
               className="flex items-center gap-1 sm:gap-2 bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 sm:px-4 rounded-full text-sm font-bold transition-colors"

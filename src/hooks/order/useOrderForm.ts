@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/src/libs/supabase/client";
 import {
   formatOrderTitle,
   formatProductValue,
@@ -137,8 +136,6 @@ export function useOrderForm(): UseOrderFormReturn {
     setIsSubmitting(true);
 
     try {
-      const supabase = createClient();
-
       const productTitle = formatOrderTitle(
         selectedProductData.category,
         selectedProductData.label,
@@ -147,27 +144,32 @@ export function useOrderForm(): UseOrderFormReturn {
         quantity,
       );
 
-      const { error: insertError } = await supabase.from("orders").insert({
-        product: productTitle,
-        quantity,
-        unit_price: unitPrice,
-        unit_kg: unitKg,
-        orderer_name: formData.ordererName,
-        orderer_phone: formData.ordererPhone,
-        receiver_name: isSameAsOrderer
-          ? formData.ordererName
-          : formData.receiverName,
-        receiver_phone: isSameAsOrderer
-          ? formData.ordererPhone
-          : formData.receiverPhone,
-        address: formData.address,
-        detail_address: formData.detailAddress || null,
-        is_same_as_orderer: isSameAsOrderer,
-        memo: formData.memo.trim() || null,
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          product: productTitle,
+          quantity,
+          unit_price: unitPrice,
+          unit_kg: unitKg,
+          orderer_name: formData.ordererName,
+          orderer_phone: formData.ordererPhone,
+          receiver_name: isSameAsOrderer
+            ? formData.ordererName
+            : formData.receiverName,
+          receiver_phone: isSameAsOrderer
+            ? formData.ordererPhone
+            : formData.receiverPhone,
+          address: formData.address,
+          detail_address: formData.detailAddress || null,
+          is_same_as_orderer: isSameAsOrderer,
+          memo: formData.memo.trim() || null,
+        }),
       });
 
-      if (insertError) {
-        console.error("주문 저장 실패:", insertError);
+      const data = await res.json().catch(() => ({ ok: false }));
+      if (!res.ok || !data.ok) {
+        console.error("주문 저장 실패:", data.error ?? res.statusText);
         alert("주문 접수에 실패했습니다. 다시 시도해주세요.");
         return;
       }

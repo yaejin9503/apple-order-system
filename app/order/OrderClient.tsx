@@ -12,8 +12,15 @@ import QuantitySelector from "@/src/components/order/QuantitySelector";
 import ReceiverSection from "@/src/components/order/ReceiverSection";
 import AccountInfo from "@/src/components/order/AccountInfo";
 import { Product } from "@/src/types/product";
+import { AddressBookEntry } from "@/src/components/order/AddressBookButton";
 
-export default function OrderClient({ products }: { products: Product[] }) {
+export default function OrderClient({
+  products,
+  addressBook,
+}: {
+  products: Product[];
+  addressBook: AddressBookEntry[] | null;
+}) {
   const {
     selectedProduct,
     unitPrice,
@@ -69,6 +76,7 @@ export default function OrderClient({ products }: { products: Product[] }) {
             onReceiverChange={handleReceiverChange}
             onAddressSearch={() => setIsPostcodeOpen(true)}
             onQuickFill={handleReceiverQuickFill}
+            addressBook={addressBook}
           />
 
           <div className="mb-6 sm:mb-8">

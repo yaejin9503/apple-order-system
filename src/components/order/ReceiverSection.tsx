@@ -1,6 +1,9 @@
 import { Apple } from "lucide-react";
 import FormInput from "@/src/components/order/FormInput";
 import QuickReceiverInput from "@/src/components/order/QuickReceiverInput";
+import AddressBookButton, {
+  AddressBookEntry,
+} from "@/src/components/order/AddressBookButton";
 
 interface ReceiverSectionProps {
   receiverName: string;
@@ -19,6 +22,7 @@ interface ReceiverSectionProps {
     address: string;
     detailAddress: string;
   }) => void;
+  addressBook: AddressBookEntry[] | null;
 }
 
 export default function ReceiverSection({
@@ -30,6 +34,7 @@ export default function ReceiverSection({
   onReceiverChange,
   onAddressSearch,
   onQuickFill,
+  addressBook,
 }: ReceiverSectionProps) {
   return (
     <div className="mb-6 sm:mb-8">
@@ -39,6 +44,14 @@ export default function ReceiverSection({
           주문 하시는 분
         </h2>
       </div>
+
+      {addressBook && (
+        <AddressBookButton
+          entries={addressBook}
+          onSelect={onQuickFill}
+          disabled={isSameAsOrderer}
+        />
+      )}
 
       <QuickReceiverInput onFilled={onQuickFill} disabled={isSameAsOrderer} />
 

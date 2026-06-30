@@ -347,8 +347,11 @@ export default function AdminOrdersClient({
                       )}
                     </div>
 
-                    <p className="text-base sm:text-lg font-bold text-gray-900 mb-2">
+                    <p className="text-base sm:text-lg font-bold text-gray-900">
                       🛒 {order.product}
+                    </p>
+                    <p className="text-sm text-gray-600 mb-2">
+                      × {order.quantity}개
                     </p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-sm">

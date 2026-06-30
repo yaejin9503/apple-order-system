@@ -25,6 +25,8 @@ import {
 interface DraftProduct {
   label: string;
   price: string;
+  price_text: string;
+  kg: string;
 }
 
 const COLOR_STYLES: Record<
@@ -73,6 +75,8 @@ export default function AdminProductsClient({
   const [editDraft, setEditDraft] = useState<DraftProduct>({
     label: "",
     price: "",
+    price_text: "",
+    kg: "",
   });
   const [addingCategory, setAddingCategory] = useState<ProductCategory | null>(
     null,
@@ -80,6 +84,8 @@ export default function AdminProductsClient({
   const [addDraft, setAddDraft] = useState<DraftProduct>({
     label: "",
     price: "",
+    price_text: "",
+    kg: "",
   });
 
   const grouped = useMemo(() => {
@@ -100,31 +106,51 @@ export default function AdminProductsClient({
 
   const startEdit = (product: Product) => {
     setEditingId(product.id);
-    setEditDraft({ label: product.label, price: product.price });
+    setEditDraft({
+      label: product.label,
+      price: String(product.price),
+      price_text: product.price_text,
+      kg: String(product.kg),
+    });
   };
 
   const cancelEdit = () => {
     setEditingId(null);
-    setEditDraft({ label: "", price: "" });
+    setEditDraft({ label: "", price: "", price_text: "", kg: "" });
   };
 
   const saveEdit = async (product: Product) => {
     const label = editDraft.label.trim();
-    const price = editDraft.price.trim();
-    if (!label || !price) {
-      alert("품목명과 가격을 입력해주세요.");
+    const priceText = editDraft.price_text.trim();
+    const priceNum = Number(editDraft.price);
+    const kgNum = Number(editDraft.kg);
+    if (
+      !label ||
+      !priceText ||
+      !editDraft.price ||
+      !editDraft.kg ||
+      !Number.isFinite(priceNum) ||
+      priceNum < 0 ||
+      !Number.isFinite(kgNum) ||
+      kgNum <= 0
+    ) {
+      alert("품목명, 가격(숫자), 가격표시, kg을 모두 올바르게 입력해주세요.");
       return;
     }
 
     const prev = products;
     setProducts((current) =>
-      current.map((p) => (p.id === product.id ? { ...p, label, price } : p)),
+      current.map((p) =>
+        p.id === product.id
+          ? { ...p, label, price: priceNum, price_text: priceText, kg: kgNum }
+          : p,
+      ),
     );
     setEditingId(null);
 
     const { error } = await supabase
       .from("products")
-      .update({ label, price })
+      .update({ label, price: priceNum, price_text: priceText, kg: kgNum })
       .eq("id", product.id);
 
     if (error) {
@@ -205,20 +231,31 @@ export default function AdminProductsClient({
 
   const startAdd = (category: ProductCategory) => {
     setAddingCategory(category);
-    setAddDraft({ label: "", price: "" });
+    setAddDraft({ label: "", price: "", price_text: "", kg: "" });
   };
 
   const cancelAdd = () => {
     setAddingCategory(null);
-    setAddDraft({ label: "", price: "" });
+    setAddDraft({ label: "", price: "", price_text: "", kg: "" });
   };
 
   const saveAdd = useCallback(
     async (category: ProductCategory) => {
       const label = addDraft.label.trim();
-      const price = addDraft.price.trim();
-      if (!label || !price) {
-        alert("품목명과 가격을 입력해주세요.");
+      const priceText = addDraft.price_text.trim();
+      const priceNum = Number(addDraft.price);
+      const kgNum = Number(addDraft.kg);
+      if (
+        !label ||
+        !priceText ||
+        !addDraft.price ||
+        !addDraft.kg ||
+        !Number.isFinite(priceNum) ||
+        priceNum < 0 ||
+        !Number.isFinite(kgNum) ||
+        kgNum <= 0
+      ) {
+        alert("품목명, 가격(숫자), 가격표시, kg을 모두 올바르게 입력해주세요.");
         return;
       }
 
@@ -233,7 +270,9 @@ export default function AdminProductsClient({
         .insert({
           category,
           label,
-          price,
+          price: priceNum,
+          price_text: priceText,
+          kg: kgNum,
           sort_order: nextOrder,
           is_active: true,
         })
@@ -317,7 +356,7 @@ export default function AdminProductsClient({
                       >
                         {isEditing ? (
                           <div className="flex flex-col gap-2">
-                            <div className="flex gap-2">
+                            <div className="flex flex-col sm:flex-row gap-2">
                               <input
                                 type="text"
                                 value={editDraft.label}
@@ -331,7 +370,8 @@ export default function AdminProductsClient({
                                 className="flex-1 px-3 py-1.5 rounded-lg border-2 border-gray-300 focus:border-gray-500 focus:outline-none text-sm"
                               />
                               <input
-                                type="text"
+                                type="number"
+                                inputMode="numeric"
                                 value={editDraft.price}
                                 onChange={(e) =>
                                   setEditDraft((d) => ({
@@ -339,8 +379,33 @@ export default function AdminProductsClient({
                                     price: e.target.value,
                                   }))
                                 }
-                                placeholder="가격 (예: 4만5천원)"
+                                placeholder="가격 (숫자, 예: 45000)"
                                 className="flex-1 px-3 py-1.5 rounded-lg border-2 border-gray-300 focus:border-gray-500 focus:outline-none text-sm"
+                              />
+                              <input
+                                type="text"
+                                value={editDraft.price_text}
+                                onChange={(e) =>
+                                  setEditDraft((d) => ({
+                                    ...d,
+                                    price_text: e.target.value,
+                                  }))
+                                }
+                                placeholder="가격표시 (예: 4만5천원)"
+                                className="flex-1 px-3 py-1.5 rounded-lg border-2 border-gray-300 focus:border-gray-500 focus:outline-none text-sm"
+                              />
+                              <input
+                                type="number"
+                                inputMode="decimal"
+                                value={editDraft.kg}
+                                onChange={(e) =>
+                                  setEditDraft((d) => ({
+                                    ...d,
+                                    kg: e.target.value,
+                                  }))
+                                }
+                                placeholder="kg (예: 5)"
+                                className="w-full sm:w-24 px-3 py-1.5 rounded-lg border-2 border-gray-300 focus:border-gray-500 focus:outline-none text-sm"
                               />
                             </div>
                             <div className="flex gap-2 justify-end">
@@ -374,7 +439,11 @@ export default function AdminProductsClient({
                                 )}
                               </div>
                               <span className={`text-sm font-bold ${styles.text}`}>
-                                {product.price}
+                                {product.price_text}
+                                <span className="ml-2 text-xs text-gray-500 font-medium">
+                                  ({product.price.toLocaleString("ko-KR")}원 ·{" "}
+                                  {product.kg}kg)
+                                </span>
                               </span>
                             </div>
                             <div className="flex items-center gap-1">
@@ -429,7 +498,7 @@ export default function AdminProductsClient({
                   {addingCategory === cat.key && (
                     <div className="rounded-xl border-2 border-dashed border-gray-300 p-3">
                       <div className="flex flex-col gap-2">
-                        <div className="flex gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
                           <input
                             type="text"
                             value={addDraft.label}
@@ -444,7 +513,8 @@ export default function AdminProductsClient({
                             className="flex-1 px-3 py-1.5 rounded-lg border-2 border-gray-300 focus:border-gray-500 focus:outline-none text-sm"
                           />
                           <input
-                            type="text"
+                            type="number"
+                            inputMode="numeric"
                             value={addDraft.price}
                             onChange={(e) =>
                               setAddDraft((d) => ({
@@ -452,8 +522,33 @@ export default function AdminProductsClient({
                                 price: e.target.value,
                               }))
                             }
-                            placeholder="가격 (예: 4만5천원)"
+                            placeholder="가격 (숫자, 예: 45000)"
                             className="flex-1 px-3 py-1.5 rounded-lg border-2 border-gray-300 focus:border-gray-500 focus:outline-none text-sm"
+                          />
+                          <input
+                            type="text"
+                            value={addDraft.price_text}
+                            onChange={(e) =>
+                              setAddDraft((d) => ({
+                                ...d,
+                                price_text: e.target.value,
+                              }))
+                            }
+                            placeholder="가격표시 (예: 4만5천원)"
+                            className="flex-1 px-3 py-1.5 rounded-lg border-2 border-gray-300 focus:border-gray-500 focus:outline-none text-sm"
+                          />
+                          <input
+                            type="number"
+                            inputMode="decimal"
+                            value={addDraft.kg}
+                            onChange={(e) =>
+                              setAddDraft((d) => ({
+                                ...d,
+                                kg: e.target.value,
+                              }))
+                            }
+                            placeholder="kg (예: 5)"
+                            className="w-full sm:w-24 px-3 py-1.5 rounded-lg border-2 border-gray-300 focus:border-gray-500 focus:outline-none text-sm"
                           />
                         </div>
                         <div className="flex gap-2 justify-end">

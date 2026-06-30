@@ -218,7 +218,7 @@ function CategorySection({
           <PriceRow
             key={product.id}
             label={product.label}
-            price={product.price}
+            price={product.price_text}
             color={category.color}
             isFirst={index === 0}
           />

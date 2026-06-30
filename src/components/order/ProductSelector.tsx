@@ -7,7 +7,7 @@ import { Product, ProductCategory } from "@/src/types/product";
 
 interface ProductSelectorProps {
   selectedProduct: string;
-  onProductSelect: (product: string) => void;
+  onProductSelect: (product: Product) => void;
   products: Product[];
 }
 
@@ -75,14 +75,14 @@ export default function ProductSelector({
                 const value = formatProductValue(
                   cat.key,
                   product.label,
-                  product.price,
+                  product.price_text,
                 );
                 const isSelected = selectedProduct === value;
                 return (
                   <button
                     key={product.id}
                     type="button"
-                    onClick={() => onProductSelect(value)}
+                    onClick={() => onProductSelect(product)}
                     className={`w-full p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 ${
                       isSelected
                         ? SELECTED_STYLES[cat.color]
@@ -96,7 +96,7 @@ export default function ProductSelector({
                       <span
                         className={`text-base sm:text-lg font-bold ${PRICE_COLORS[cat.color]}`}
                       >
-                        {product.price}
+                        {product.price_text}
                       </span>
                     </div>
                   </button>

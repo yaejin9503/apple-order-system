@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/src/libs/supabase/client";
+import {
+  formatOrderTitle,
+  formatProductValue,
+} from "@/src/libs/productCategories";
+import { Product } from "@/src/types/product";
 
 export interface FormData {
   ordererName: string;
@@ -14,11 +19,14 @@ export interface FormData {
 
 export interface UseOrderFormReturn {
   selectedProduct: string;
-  setSelectedProduct: (product: string) => void;
+  unitPrice: number;
+  unitKg: number;
+  selectProduct: (product: Product) => void;
+  quantity: number;
+  setQuantity: (quantity: number) => void;
   isSameAsOrderer: boolean;
   formData: FormData;
   isSubmitting: boolean;
-  handleProductSelect: (productId: string) => void;
   handleSameAsOrderer: (checked: boolean) => void;
   handleOrdererChange: (
     field: "ordererName" | "ordererPhone",
@@ -37,7 +45,20 @@ export interface UseOrderFormReturn {
 
 export function useOrderForm(): UseOrderFormReturn {
   const router = useRouter();
-  const [selectedProduct, setSelectedProduct] = useState<string>("");
+  const [selectedProductData, setSelectedProductData] = useState<Product | null>(
+    null,
+  );
+  const [quantity, setQuantity] = useState<number>(1);
+
+  const selectedProduct = selectedProductData
+    ? formatProductValue(
+        selectedProductData.category,
+        selectedProductData.label,
+        selectedProductData.price_text,
+      )
+    : "";
+  const unitPrice = selectedProductData?.price ?? 0;
+  const unitKg = selectedProductData?.kg ?? 0;
   const [isSameAsOrderer, setIsSameAsOrderer] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -50,8 +71,8 @@ export function useOrderForm(): UseOrderFormReturn {
     memo: "",
   });
 
-  const handleProductSelect = (productId: string) => {
-    setSelectedProduct(productId);
+  const selectProduct = (product: Product) => {
+    setSelectedProductData(product);
   };
 
   const handleSameAsOrderer = (checked: boolean) => {
@@ -108,7 +129,7 @@ export function useOrderForm(): UseOrderFormReturn {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!selectedProduct) {
+    if (!selectedProductData) {
       alert("상품을 선택해주세요!");
       return;
     }
@@ -118,8 +139,19 @@ export function useOrderForm(): UseOrderFormReturn {
     try {
       const supabase = createClient();
 
+      const productTitle = formatOrderTitle(
+        selectedProductData.category,
+        selectedProductData.label,
+        selectedProductData.kg,
+        selectedProductData.price,
+        quantity,
+      );
+
       const { error: insertError } = await supabase.from("orders").insert({
-        product: selectedProduct,
+        product: productTitle,
+        quantity,
+        unit_price: unitPrice,
+        unit_kg: unitKg,
         orderer_name: formData.ordererName,
         orderer_phone: formData.ordererPhone,
         receiver_name: isSameAsOrderer
@@ -157,12 +189,15 @@ export function useOrderForm(): UseOrderFormReturn {
 
   return {
     selectedProduct,
-    setSelectedProduct,
+    unitPrice,
+    unitKg,
+    selectProduct,
+    quantity,
+    setQuantity,
     isSameAsOrderer,
     formData,
     isSubmitting,
     handleMemoChange,
-    handleProductSelect,
     handleSameAsOrderer,
     handleOrdererChange,
     handleReceiverChange,

@@ -8,7 +8,9 @@ export interface Product {
   id: string;
   category: ProductCategory;
   label: string;
-  price: string;
+  price: number;
+  price_text: string;
+  kg: number;
   sort_order: number;
   is_active: boolean;
   created_at: string;

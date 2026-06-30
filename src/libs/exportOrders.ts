@@ -1,11 +1,11 @@
 import { Order } from "@/src/types/order";
 
-function splitProduct(product: string): { name: string; price: string } {
+function splitProduct(product: string): { name: string; priceText: string } {
   const match = product.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
   if (match) {
-    return { name: match[1].trim(), price: match[2].trim() };
+    return { name: match[1].trim(), priceText: match[2].trim() };
   }
-  return { name: product, price: "" };
+  return { name: product, priceText: "" };
 }
 
 function formatAddress(order: Order): string {
@@ -22,10 +22,10 @@ export function formatOrdersToForwardAsText(orders: Order[]): string {
 
   return target
     .map((o) => {
-      const { name, price } = splitProduct(o.product);
+      const { name, priceText } = splitProduct(o.product);
       return [
         name,
-        price,
+        priceText,
         o.receiver_name,
         o.receiver_phone,
         formatAddress(o),

@@ -8,6 +8,7 @@ import { useOrderForm } from "@/src/hooks/order/useOrderForm";
 import { Postcode } from "@/src/components/Postcode";
 import OrderPageHeader from "@/src/components/order/OrderPageHeader";
 import ProductSelector from "@/src/components/order/ProductSelector";
+import QuantitySelector from "@/src/components/order/QuantitySelector";
 import ReceiverSection from "@/src/components/order/ReceiverSection";
 import AccountInfo from "@/src/components/order/AccountInfo";
 import { Product } from "@/src/types/product";
@@ -15,7 +16,10 @@ import { Product } from "@/src/types/product";
 export default function OrderClient({ products }: { products: Product[] }) {
   const {
     selectedProduct,
-    setSelectedProduct,
+    unitPrice,
+    selectProduct,
+    quantity,
+    setQuantity,
     isSameAsOrderer,
     formData,
     isSubmitting,
@@ -44,9 +48,17 @@ export default function OrderClient({ products }: { products: Product[] }) {
         >
           <ProductSelector
             selectedProduct={selectedProduct}
-            onProductSelect={setSelectedProduct}
+            onProductSelect={selectProduct}
             products={products}
           />
+
+          {selectedProduct && (
+            <QuantitySelector
+              quantity={quantity}
+              onChange={setQuantity}
+              unitPrice={unitPrice}
+            />
+          )}
 
           <ReceiverSection
             receiverName={formData.receiverName}
